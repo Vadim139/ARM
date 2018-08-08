@@ -1,0 +1,34 @@
+src/STM32F4_Class.o: ../src/STM32F4_Class.cpp \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/STM32F4_Class.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/tm_stm32f4_gpio.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/cmsis/stm32f4xx.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/cmsis/core_cm4.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/cmsis/core_cmInstr.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/cmsis/cmsis_gcc.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/cmsis/core_cmFunc.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/cmsis/core_cmSimd.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/cmsis/system_stm32f4xx.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_gpio.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/defines.h
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/STM32F4_Class.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/tm_stm32f4_gpio.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/cmsis/stm32f4xx.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/cmsis/core_cm4.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/cmsis/core_cmInstr.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/cmsis/cmsis_gcc.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/cmsis/core_cmFunc.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/cmsis/core_cmSimd.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/cmsis/system_stm32f4xx.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_gpio.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/defines.h:

@@ -1,0 +1,4 @@
+system/src/newlib/_cxx.o: ../system/src/newlib/_cxx.cpp \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/diag/Trace.h
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/diag/Trace.h:

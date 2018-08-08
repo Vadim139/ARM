@@ -1,0 +1,10 @@
+src/Ethernet/socket.o: ../src/Ethernet/socket.c \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/Ethernet\socket.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/Ethernet/wizchip_conf.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/Ethernet/W5500/w5500.h
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/Ethernet\socket.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/Ethernet/wizchip_conf.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/Ethernet/W5500/w5500.h:

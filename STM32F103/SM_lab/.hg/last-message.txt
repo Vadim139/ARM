@@ -1,0 +1,2 @@
+V 1.55
+Rozwijana komunikacja z Atmegą, DZIWNE RZECZU DZIEJĄ SIĘ GDY STRONA JEST OFFLINE!

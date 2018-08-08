@@ -1,0 +1,2 @@
+ v.0.010 - Wszystko dzia³a:
+cam -> lcd

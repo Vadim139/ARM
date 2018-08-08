@@ -1,0 +1,187 @@
+src/main.o: ../src/main.cpp \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/main.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/pwm.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/cmsis/stm32f4xx.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/cmsis/core_cm4.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/cmsis/core_cmInstr.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/cmsis/cmsis_gcc.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/cmsis/core_cmFunc.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/cmsis/core_cmSimd.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/cmsis/system_stm32f4xx.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/stm32f4xx_conf.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_adc.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_can.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_crc.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_cryp.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_dac.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_dbgmcu.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_dcmi.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_dma.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_exti.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/stm32f4xx_conf.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_flash.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_fsmc.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_hash.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_gpio.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_i2c.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_iwdg.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_pwr.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_rcc.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_rng.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_rtc.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_sdio.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_spi.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_syscfg.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_tim.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_usart.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_wwdg.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/misc.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/ts.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/stm32f4xx_it.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/functions.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/LCD_STM32F4.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/fonts.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/common.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/stm32f4_discovery.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/img/img00.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/img/img02.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/STM32F3_my.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/tm_stm32f4_adc.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/defines.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/tm_stm32f4_gpio.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/Ethernet/wizchip_conf.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/Ethernet/W5500/w5500.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/Ethernet/socket.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/STM32F4_my.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/STM32F4_Class.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/tm_stm32f4_adc.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/tm_stm32f4_spi.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/attributes.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/OV7670_I2C.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/img/img03.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/sccb.h \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/tm_stm32f4_mco_output.h
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/main.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/pwm.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/cmsis/stm32f4xx.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/cmsis/core_cm4.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/cmsis/core_cmInstr.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/cmsis/cmsis_gcc.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/cmsis/core_cmFunc.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/cmsis/core_cmSimd.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/cmsis/system_stm32f4xx.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/stm32f4xx_conf.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_adc.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_can.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_crc.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_cryp.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_dac.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_dbgmcu.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_dcmi.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_dma.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_exti.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/stm32f4xx_conf.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_flash.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_fsmc.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_hash.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_gpio.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_i2c.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_iwdg.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_pwr.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_rcc.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_rng.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_rtc.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_sdio.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_spi.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_syscfg.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_tim.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_usart.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/stm32f4xx_wwdg.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/stm32f4/misc.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/ts.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/stm32f4xx_it.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/functions.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/LCD_STM32F4.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/fonts.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/common.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/stm32f4_discovery.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/img/img00.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/img/img02.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/STM32F3_my.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/tm_stm32f4_adc.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/defines.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/tm_stm32f4_gpio.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/Ethernet/wizchip_conf.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/Ethernet/W5500/w5500.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/Ethernet/socket.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/STM32F4_my.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/STM32F4_Class.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/tm_stm32f4_adc.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/tm_stm32f4_spi.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/attributes.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/OV7670_I2C.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/img/img03.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/sccb.h:
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/tm_stm32f4_mco_output.h:

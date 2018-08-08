@@ -1,0 +1,9 @@
+syntax: glob
+Debug/
+.settings/
+ldscripts/
+.project
+.hgignore
+.gitignore
+.cproject
+Release/

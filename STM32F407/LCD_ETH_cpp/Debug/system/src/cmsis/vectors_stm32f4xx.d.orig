@@ -1,0 +1,5 @@
+system/src/cmsis/vectors_stm32f4xx.o: \
+ ../system/src/cmsis/vectors_stm32f4xx.c \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/cortexm/ExceptionHandlers.h
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/system/include/cortexm/ExceptionHandlers.h:

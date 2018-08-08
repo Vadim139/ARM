@@ -1,0 +1,4 @@
+src/fonts.o: ../src/fonts.c \
+ C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/fonts.h
+
+C:/Users/Vadim/ARM_workspace/LCD_ETH_cpp/include/fonts.h:
