@@ -687,9 +687,9 @@ uint8_t SIM800L::Init_usart() {
 //		if(!SIM_find(",200,\r\n"))
 //			err = 1;
 
-
+		timer.sleep(1000);
 		SIM_sendcom("AT+HTTPREAD\r\n");
-//		timer.sleep(1000);
+		timer.sleep(1000);
 		for(int i = 0;i<20;i++){
 		timer.sleep(100);
 		if(SIM_find("OK\r\n"))

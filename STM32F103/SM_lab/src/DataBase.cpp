@@ -21,7 +21,7 @@ Data_Base::Data_Base() {
 	settings.Alarm_ID = 1;
 
 	settings.Net_on = 1;
-	settings.Net_s = 3;
+	settings.Net_s = 2;
 
 	memset(settings.WIFIName,0,19);
 	memset(settings.WIFIPass,0,20);
@@ -573,6 +573,177 @@ uint8_t Data_Base::Read_Outputs()
 	return outputs.NoO;
 }
 
+uint8_t Data_Base::Read_Output1()
+{
+	err = 0;
+	uint16_t pos, min = 0;
+	char temp[5] = {0,0,0,0,0};
+
+	char* buffor;
+
+	if(!(buffor = (char*)Net.HTTP_RQS(Get_WEB_IP(),"?RQS=1&SRQS=4",1)))
+		return 1;
+
+	if(!(pos = Net.Find("--",buffor,0)))
+		return 2;
+
+
+	min = pos;
+
+	for(int i = 0; i<2;i++)
+	{
+		min = pos;
+
+
+		pos += 1;
+
+		for(int k = 0;k<5;k++)
+			if(buffor[pos+k] != ';')
+				temp[k] = buffor[pos+k];
+			else{
+				pos = pos + k + 1;
+//				outputs.output[0]->Output_ID = atoi(temp);
+				temp[0] = 0;
+				temp[1] = 0;
+				temp[2] = 0;
+				temp[3] = 0;
+				temp[4] = 0;
+				break;
+			}
+
+		for(int k = 0;k<5;k++)
+			if(buffor[pos+k] != ';')
+				temp[k] = buffor[pos+k];
+			else{
+				pos = pos + k + 1;
+//				outputs.output[i]->Type = atoi(temp);
+				temp[0] = 0;
+				temp[1] = 0;
+				temp[2] = 0;
+				temp[3] = 0;
+				temp[4] = 0;
+				break;
+			}
+
+		for(int k = 0;k<5;k++)
+			if(buffor[pos+k] != ';')
+				temp[k] = buffor[pos+k];
+			else{
+				pos = pos + k + 1;
+				outputs.output[i]->Schedule[0] = atoi(temp);
+				temp[0] = 0;
+				temp[1] = 0;
+				temp[2] = 0;
+				temp[3] = 0;
+				temp[4] = 0;
+				break;
+			}
+
+		for(int k = 0;k<5;k++)
+			if(buffor[pos+k] != ';')
+				temp[k] = buffor[pos+k];
+			else{
+				pos = pos + k + 1;
+				outputs.output[i]->Schedule[1] = atoi(temp);
+				temp[0] = 0;
+				temp[1] = 0;
+				temp[2] = 0;
+				temp[3] = 0;
+				temp[4] = 0;
+				break;
+			}
+
+		for(int k = 0;k<5;k++)
+			if(buffor[pos+k] != ';')
+				temp[k] = buffor[pos+k];
+			else{
+				pos = pos + k + 1;
+				outputs.output[i]->Schedule[2] = atoi(temp);
+				temp[0] = 0;
+				temp[1] = 0;
+				temp[2] = 0;
+				temp[3] = 0;
+				temp[4] = 0;
+				break;
+			}
+
+		for(int k = 0;k<5;k++)
+			if(buffor[pos+k] != ';')
+				temp[k] = buffor[pos+k];
+			else{
+				pos = pos + k + 1;
+				outputs.output[i]->Schedule[3] = atoi(temp);
+				temp[0] = 0;
+				temp[1] = 0;
+				temp[2] = 0;
+				temp[3] = 0;
+				temp[4] = 0;
+				break;
+			}
+
+		for(int k = 0;k<5;k++)
+			if(buffor[pos+k] != ';')
+				temp[k] = buffor[pos+k];
+			else{
+				pos = pos + k + 1;
+				outputs.output[i]->Schedule[4] = atoi(temp);
+				temp[0] = 0;
+				temp[1] = 0;
+				temp[2] = 0;
+				temp[3] = 0;
+				temp[4] = 0;
+				break;
+			}
+
+		for(int k = 0;k<5;k++)
+			if(buffor[pos+k] != ';')
+				temp[k] = buffor[pos+k];
+			else{
+				pos = pos + k + 1;
+				outputs.output[i]->Schedule[5] = atoi(temp);
+				temp[0] = 0;
+				temp[1] = 0;
+				temp[2] = 0;
+				temp[3] = 0;
+				temp[4] = 0;
+				break;
+			}
+
+		for(int k = 0;k<5;k++)
+			if(buffor[pos+k] != ';')
+				temp[k] = buffor[pos+k];
+			else{
+				pos = pos + k + 1;
+				outputs.output[i]->Schedule[6] = atoi(temp);
+				temp[0] = 0;
+				temp[1] = 0;
+				temp[2] = 0;
+				temp[3] = 0;
+				temp[4] = 0;
+				break;
+			}
+
+		for(int k = 0;k<5;k++)
+			if(buffor[pos+k] != ';')
+				temp[k] = buffor[pos+k];
+			else{
+				pos = pos + k + 1;
+				outputs.output[i]->Schedule[7] = atoi(temp);
+				temp[0] = 0;
+				temp[1] = 0;
+				temp[2] = 0;
+				temp[3] = 0;
+				temp[4] = 0;
+				break;
+			}
+
+
+		pos = Net.Find("--",buffor,min);
+	}
+	Net.TCP_Close();
+	return outputs.NoO;
+}
+
 uint8_t Data_Base::Read_All()
 {
 	err = 0;
@@ -874,7 +1045,7 @@ uint8_t Data_Base::Update_Output(Output output, uint8_t ID)
 	outputs.output[ID]->Schedule[6] = output.Schedule[6];
 	outputs.output[ID]->Schedule[7] = output.Schedule[7];
 
-	FEE_Add_Output(*(outputs.output[ID]));
+//	FEE_Add_Output(*(outputs.output[ID]));
 
 	sprintf(buffor,"?RQS=2&SRQS=5&ID=%d&AID=%d&Type=%d&S1_H=%d&S1_M=%d&E1_H=%d&E1_M=%d&S2_H=%d&S2_M=%d&E2_H=%d&E2_M=%d", output.Output_ID, settings.Alarm_ID, output.Type, output.Schedule[0], output.Schedule[1], output.Schedule[2] , output.Schedule[3], output.Schedule[4], output.Schedule[5], output.Schedule[6], output.Schedule[7]);
 

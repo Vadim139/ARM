@@ -116,6 +116,7 @@ public:
 	uint8_t Read_GSM();
 	uint8_t Read_Sensors();
 	uint8_t Read_Outputs();
+	uint8_t Read_Output1();
 	uint8_t Add_User(User user, uint8_t flag = 1);
 	uint8_t Add_Sensor(Sensor sensor, uint8_t flag = 1);
 	uint8_t Add_GSM(char* Num, char* Num_old, uint8_t flag = 1);

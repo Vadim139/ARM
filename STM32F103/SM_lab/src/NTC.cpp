@@ -29,8 +29,8 @@ float NTC::Get_temp()
 	float temp, adcv;
 	adc = ADC_GetConversionValue(ADC1);
 	adcv = adc * 3.3f / 4096.0f;
-	temp = ((4148.88*298.15)/((log((21690*adcv)/((3.3-adcv)*10000))*298.15)+4148.88)) - 273.15;
-	return temp;
+	temp = ((3609.73*298.15)/((log((21690*adcv)/((3.3-adcv)*2000))*298.15)+3609.73)) - 273.15;
+	return temp - 0.5;
 }
 
 void NTC::Get_temp(char* temp)
@@ -39,6 +39,7 @@ void NTC::Get_temp(char* temp)
 	float t, adcv;
 	adc = ADC_GetConversionValue(ADC1);
 	adcv = adc * 3.3f / 4096.0f;
-	t = ((4148.88*298.15)/((log((21690*adcv)/((3.3-adcv)*10000))*298.15)+4148.88)) - 273.15;
+	t = ((3609.73*298.15)/((log((21690*adcv)/((3.3-adcv)*2000))*298.15)+3609.73)) - 273.15;
+//	t = ((4148.88*298.15)/((log((21690*adcv)/((3.3-adcv)*10000))*298.15)+4148.88)) - 273.15;
 	floatToString(t,temp,3);
 }

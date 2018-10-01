@@ -94,7 +94,8 @@ extern uint16_t Users_addr[10];
 extern uint16_t Sensors_addr[10];
 extern uint16_t Numbers_addr[10];
 extern uint16_t Outputs_addr[4];
-
+	Output o1;
+	int TEMP1;
 int main()
 {
 
@@ -172,12 +173,12 @@ int main()
 //    // Init panel
 //    if(!(Atm644.Init()))
 //    {
-    	Atm644.IsConnected = true;
+    	/*Atm644.IsConnected = true;
     	Atm644.Run();
     	timer.sleep(50);
     	Atm644.LCD_Clr();
     	timer.sleep(50);
-    	Atm644.LCD_Put(0,0,"Initialization..");
+    	Atm644.LCD_Put(0,0,"Initialization..");*/
 //    	Atm644.Halt();
 //    }
 
@@ -193,19 +194,19 @@ int main()
 	FEE_Init();
 
    	timer.sleep(100);
-   	FEE_ReadAll();
+//   	FEE_ReadAll();
 
 //   	Base.Change_WIFIName("Vadim123");
 //   	Base.Change_WIFIPass("12345678qwertyui");
 	// Init ESP
-	for(int i = 0; i<5; i++)
+	/*for(int i = 0; i<5; i++)
 		if(!(err = ESP.Init()))
 			break;
 
 	if(err && Atm644.IsConnected){
 		Atm644.LCD_Put(0,1,"WIFI INIT FAILED");
 		err = 0;
-	}
+	}*/
 
 	// Init SIM
 	for(int i = 0; i<5; i++)
@@ -227,20 +228,20 @@ int main()
     ADCx_Init(ADC1, 0);
 
 
-	timer.sleep(5000);
+	timer.sleep(10000);
 
     Net.Connect();
 
-    if(Net.IsWIFI())
-    	trace_printf("WIFI connected!\n");
-    else
-    	trace_printf("Connection failed!!");
+//    if(Net.IsWIFI())
+//    	trace_printf("WIFI connected!\n");
+//    else
+//    	trace_printf("Connection failed!!");
 
-    if(Net.IsGSM())
+    while(!Net.IsGSM());
     	trace_printf("GSM connected!\n");
-    else
-    	trace_printf("Connection failed!!\n");
-
+//    else
+//    	trace_printf("Connection failed!!\n");
+    RTC1.Set_From_Net();
 //    if(Atm644.IsConnected){
     	Atm644.Run();
     	Atm644.LCD_Clr();
@@ -352,17 +353,20 @@ int main()
 //       	   	Base.Add_GSM(n1,"0");
 //       	   	Base.Add_GSM(n2,"0");
 
-//    	   	Output o1;
-//    	   	o1.Schedule[0] = 0;
-//    	   	o1.Schedule[1] = 30;
-//    	   	o1.Schedule[2] = 2;
-//    	   	o1.Schedule[3] = 20;
-//    	   	o1.Schedule[4] = 0;
-//    	   	o1.Schedule[5] = 0;
-//    	   	o1.Schedule[6] = 0;
-//    	   	o1.Schedule[7] = 0;
-//    	   	o1.Output_ID = 1;
-//    	   	o1.Type = 1;
+    		Base.Read_Outputs();
+    		output = Base.Get_Output(0);
+    		TEMP1 = output->Schedule[1];
+
+    	   	o1.Schedule[0] = 0;
+    	   	o1.Schedule[1] = 30;
+    	   	o1.Schedule[2] = 2;
+    	   	o1.Schedule[3] = 20;
+    	   	o1.Schedule[4] = 0;
+    	   	o1.Schedule[5] = 0;
+    	   	o1.Schedule[6] = 0;
+    	   	o1.Schedule[7] = 0;
+    	   	o1.Output_ID = 3;
+    	   	o1.Type = 0;
 //    	Base.Update_Output(o1,1);
 
        	   	init_flag = true;
@@ -618,9 +622,12 @@ void USART3_IRQHandler(void)
 int cE = 0, cS = 0;
 //uint8_t ID[6];
 volatile uint8_t tim1 = 0, tim2 = 0;
-uint16_t tim3 = 0;
+uint16_t tim3 = 0, tim4 = 0;
 volatile bool Alarm_flag = false;
 volatile bool Sch1 = false, Sch2 = false;
+
+char temp[10];
+
 void TIM1_UP_IRQHandler() {
 	if (TIM_GetITStatus(TIM1, TIM_IT_Update) != RESET) {
 
@@ -635,13 +642,13 @@ void TIM1_UP_IRQHandler() {
 //		        if(!(Atm644.Init()))
 //		        	Atm644.IsConnected = true;
 
-				if (!Net.IsWIFI() && (Base.Get_Net_s() != 2)) {
+				/*if (!Net.IsWIFI() && (Base.Get_Net_s() != 2)) {
 					Net.Connect_WIFI();
 					if (Net.IsWIFI())
 						trace_printf("WIFI connected!\n");
 					else
 						trace_printf("Connection failed!!");
-				}
+				}*/
 
 				if (!Net.IsGSM() && (Base.Get_Net_s() != 1)) {
 //		    	rec = 10;
@@ -652,10 +659,21 @@ void TIM1_UP_IRQHandler() {
 						trace_printf("Connection failed!!");
 				}
 
+
+				o1.Schedule[1] = (int)Ntc.Get_temp();
+				Base.Update_Output(o1,3);
+				Base.Read_Output1();
+	    		output = Base.Get_Output(0);
+	    		TEMP1 = output->Schedule[1];
+
 				tim2 = 0;
-			} else {
+			} else if (tim4 >= 3600){
+				RTC1.Set_From_Net();
+				tim4 = 0;
+			}else {
 				tim1++;
 				tim2++;
+				tim4++;
 			}
 
 			if(Base.ALARM && Alarm_flag)
@@ -764,11 +782,18 @@ void TIM1_UP_IRQHandler() {
 						{
 							if((((RTC1.Time_s.Hour*60)+RTC1.Time_s.Minute) >= (output->Schedule[0]*60)+(output->Schedule[1])) && (((RTC1.Time_s.Hour*60)+RTC1.Time_s.Minute) <= (output->Schedule[2]*60)+(output->Schedule[3])))
 							{
-								if(output->Status != 1){
+								if((output->Status != 1) || (o1.Schedule[1]>=TEMP1)){
+									if(o1.Schedule[1]<=TEMP1){
 									Out[output->Output_ID - 1].Set_high();
 //									output->Status = 1;
 									Base.Update_Output(output->Output_ID,1);
 									Sch1 = true;
+									}else{
+										Out[output->Output_ID - 1].Set_low();
+	//									output->Status = 0;
+										Base.Update_Output(output->Output_ID,0);
+										Sch1 = false;
+									}
 								}
 							}else //if(((RTC1.Time_s.Hour*60)+RTC1.Time_s.Minute) < (output->Schedule[0]*60)+(output->Schedule[1])){
 							{
@@ -781,13 +806,20 @@ void TIM1_UP_IRQHandler() {
 							}
 						}else //23-02
 						{
-							if(((((RTC1.Time_s.Hour*60)+RTC1.Time_s.Minute) >= (output->Schedule[0]*60)+(output->Schedule[1])) && (((RTC1.Time_s.Hour*60)+RTC1.Time_s.Minute) <= 0)) || ((((RTC1.Time_s.Hour*60)+RTC1.Time_s.Minute) <= (output->Schedule[0]*60)+(output->Schedule[1])) && (((RTC1.Time_s.Hour*60)+RTC1.Time_s.Minute) > 0)))
+							if(((((RTC1.Time_s.Hour*60)+RTC1.Time_s.Minute) >= (output->Schedule[0]*60)+(output->Schedule[1])) && (((RTC1.Time_s.Hour*60)+RTC1.Time_s.Minute) <= 1440)) || ((((RTC1.Time_s.Hour*60)+RTC1.Time_s.Minute) <= (output->Schedule[2]*60)+(output->Schedule[3])) && (((RTC1.Time_s.Hour*60)+RTC1.Time_s.Minute) >= 0)))
 							{
-								if(output->Status != 1){
+								if((output->Status != 1) || (o1.Schedule[1]>TEMP1)){
+									if(o1.Schedule[1]<=TEMP1){
 									Out[output->Output_ID - 1].Set_high();
 //									output->Status = 1;
 									Base.Update_Output(output->Output_ID,1);
 									Sch1 = true;
+									}else if(output->Status != 0){
+										Out[output->Output_ID - 1].Set_low();
+	//									output->Status = 0;
+										Base.Update_Output(output->Output_ID,0);
+										Sch1 = false;
+									}
 								}
 							}else //if(((RTC1.Time_s.Hour*60)+RTC1.Time_s.Minute) < (output->Schedule[0]*60)+(output->Schedule[1])){
 								if(output->Status == 1 && !Sch2){
@@ -876,7 +908,7 @@ void EXTI0_IRQHandler(void)
 
 
 #define RTC_LSB_MASK     ((uint32_t)0x0000FFFF)  /*!< RTC LSB Mask */
-char temp[10];
+
 char buff[34];
 void RTC_IRQHandler(void)
 {
