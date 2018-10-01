@@ -49,7 +49,7 @@ BT_HC BT;
 GPIO_IO L1(GPIOA,GPIO_Pin_11,1);
 GPIO_IO L2(GPIOA,GPIO_Pin_12,1);
 GPIO_IO W(GPIOA,GPIO_Pin_8,1);
-
+GPIO_IO Z(GPIOB,GPIO_Pin_15,0);
 using namespace std;
 namespace {
 // ----- Timing definitions -------------------------------------------------
@@ -72,8 +72,11 @@ constexpr Timer::ticks_t BLINK_OFF_TICKS = Timer::FREQUENCY_HZ - BLINK_ON_TICKS;
 volatile bool flag = false;
 volatile bool catching = false;
 volatile bool filtering = false;
+volatile bool finding = false;
 volatile bool show = false;
 vector<uint16_t> IDs;
+uint16_t ID_f = 0;
+int ID_num = 0;
 
 int main(int argc, char* argv[]) {
 	// Send a greeting to the trace device (skipped on Release).
@@ -109,18 +112,18 @@ int main(int argc, char* argv[]) {
 //	  for(int &s : stany)
 //		  s = 0;
 //
-//	  int state = W.read_state();
-//	  while(state == W.read_state());
+//	  int state = Z.read_state();
+//	  while(state == Z.read_state());
 //	  int l = 0;
 	while (1) {
 
-//		stany[l] = W.read_state();
+//		stany[l] = Z.read_state();
 //		l++;
 //		if(l >= 2999)
 //			l = 0;
 //		timer.sleep(1);
-		  if( CanFlag == ENABLE )
-		  {
+		  if( CanFlag == ENABLE ) //bia³y open 26 szumy 28... close 429 428
+		  {						  //pom   open 459 459... close nic
 	      CanFlag = DISABLE;
 	      if(catching){
 	    	  exist = false;
@@ -134,6 +137,25 @@ int main(int argc, char* argv[]) {
     		  if(!exist)
     			  IDs.push_back(CAN_ID);
 	      }
+	      else if(finding){
+	      //	    	  exist = false;
+	      //	    	  for(auto ID : IDs){
+	      	    		  if(ID_f == CAN_ID)
+	      	    		  {
+	      	    	    	  sprintf(str,"CAN ID %x ",CAN_ID);
+	      	    	    	  BT.BT_sendcom(str);
+	      	    	    	  sprintf(str,"%x %x %x %x %x %x %x %x \r",CAN_DATA0,CAN_DATA1,CAN_DATA2,CAN_DATA3,CAN_DATA4,CAN_DATA5,CAN_DATA6,CAN_DATA7);
+	      	    	    	  BT.BT_sendcom(str);
+//	      	    			  break;
+	      	    		  }
+
+	      //	    	  }
+
+	      //	    	    	  trace_printf("CAN ID %x ",CAN_ID);
+	      //	    	    	  trace_printf("%x %x %x %x %x %x %x %x \n",CAN_DATA0,CAN_DATA1,CAN_DATA2,CAN_DATA3,CAN_DATA4,CAN_DATA5,CAN_DATA6,CAN_DATA7);
+
+
+	      	      }
 	      else if(!filtering && show){
 	    	  sprintf(str,"CAN ID %x ",CAN_ID);
 	    	  BT.BT_sendcom(str);
@@ -160,6 +182,7 @@ int main(int argc, char* argv[]) {
     	    	  BT.BT_sendcom(str);
     		  }
 	      }
+
 	      }
 		  timer.sleep(10);
 ////		  CanWriteData(0x101);
@@ -194,14 +217,74 @@ int main(int argc, char* argv[]) {
 			{
 				filtering = false;
 				show = false;
+				finding = false;
 			}
 			if(BT.BT_find("show\r"))
 			{
 				show = true;
 			}
+			if(BT.BT_find("find\r"))
+			{
+				ID_f = IDs[0];
+				finding = true;
+			}
+			if(BT.BT_find("next\r"))
+			{
+				if(ID_num < IDs.size()){
+					ID_f = IDs[++ID_num];
+					trace_printf("ID: %x \n", ID_num);
+				}else
+					trace_printf("End of ID\n");
+
+			}
 			if(BT.BT_find("send1\r"))
 			{
+				timer.sleep(200);
+				//				Line 2
+				CAN_SDATA0 = 0x04;
+				CAN_SDATA1 = 0x02;
+				CAN_SDATA2 = 0x10;
+				CAN_SDATA3 = 0x81;
+				CAN_SDATA4 = 0x00;
+				CAN_SDATA5 = 0x00;
+				CAN_SDATA6 = 0x00;
+				CAN_SDATA7 = 0x00;
+				CanWriteData(0x7B0,4);
+				timer.sleep(200);
+				//				Line 2
+				CAN_SDATA0 = 0x04;
+				CAN_SDATA1 = 0x01;
+				CAN_SDATA2 = 0x3e;
+				CAN_SDATA3 = 0x1;
+				CAN_SDATA4 = 0x00;
+				CAN_SDATA5 = 0x00;
+				CAN_SDATA6 = 0x00;
+				CAN_SDATA7 = 0x00;
+				CanWriteData(0x7B0,4);
+				timer.sleep(200);
 				//				Line 1
+//				CAN_SDATA0 = 0x04;
+//				CAN_SDATA1 = 0x04;
+//				CAN_SDATA2 = 0x30;
+//				CAN_SDATA3 = 0x10;
+//				CAN_SDATA4 = 0x07;
+//				CAN_SDATA5 = 0xff;
+//				CAN_SDATA6 = 0x00;
+//				CAN_SDATA7 = 0x00;
+//				CanWriteData(0x7B0,6);
+//				timer.sleep(200);
+//				//				Line 2
+//				CAN_SDATA0 = 0x04;
+//				CAN_SDATA1 = 0x04;
+//				CAN_SDATA2 = 0x30;
+//				CAN_SDATA3 = 0x10;
+//				CAN_SDATA4 = 0x07;
+//				CAN_SDATA5 = 0x00;
+//				CAN_SDATA6 = 0x00;
+//				CAN_SDATA7 = 0x00;
+//				CanWriteData(0x7B0,6);
+				/////////////////////////
+//				//				Line 1
 				CAN_SDATA0 = 0x04;
 				CAN_SDATA1 = 0x04;
 				CAN_SDATA2 = 0x30;
@@ -211,7 +294,7 @@ int main(int argc, char* argv[]) {
 				CAN_SDATA6 = 0x00;
 				CAN_SDATA7 = 0x00;
 				CanWriteData(0x7B0,6);
-//				timer.sleep(200);
+				timer.sleep(200);
 				//				Line 2
 				CAN_SDATA0 = 0x04;
 				CAN_SDATA1 = 0x04;
@@ -222,6 +305,7 @@ int main(int argc, char* argv[]) {
 				CAN_SDATA6 = 0x00;
 				CAN_SDATA7 = 0x00;
 				CanWriteData(0x7B0,6);
+				///////////////////////////bag
 ////				Line 1
 //				CAN_SDATA0 = 0x50;
 //				CAN_SDATA1 = 0x02;
@@ -379,6 +463,87 @@ int main(int argc, char* argv[]) {
 				CAN_SDATA7 = 0x00;
 				CanWriteData(0x5E7);
 				}
+			}
+			if (BT.BT_find("send3\r")) {
+//				for(l=0;l<255;l++)
+//					for(int k=0;k<255;k=k+4){
+				//				Line 1
+				CAN_SDATA0 = 0x04;
+				CAN_SDATA1 = 0x00;
+				CAN_SDATA2 = 0x00;//0x50;
+				CAN_SDATA3 = 0x00;
+				CAN_SDATA4 = 0x00;
+				CAN_SDATA5 = 0x00;
+				CAN_SDATA6 = 0x00;
+				CAN_SDATA7 = 0x00;
+				CanWriteData(0x3a0);
+//
+//				//				Line 2
+//				CAN_SDATA0 = 0x51;
+//				CAN_SDATA1 = 0x02;
+//				CAN_SDATA2 = 0xa0;
+//				CAN_SDATA3 = 0xca;
+//				CAN_SDATA4 = 0x1e;
+//				CAN_SDATA5 = 0x50;
+//				CAN_SDATA6 = 0xf4;
+//				CAN_SDATA7 = 0xe8;
+//				CanWriteData(0x5E7);
+//
+//				//				Line 3
+//				CAN_SDATA0 = 0x52;
+//				CAN_SDATA1 = 0x02;
+//				CAN_SDATA2 = 0x51;
+//				CAN_SDATA3 = 0x9a;
+//				CAN_SDATA4 = 0x14;
+//				CAN_SDATA5 = 0x75;
+//				CAN_SDATA6 = 0x05;
+//				CAN_SDATA7 = 0xcc;
+//				CanWriteData(0x5E7);
+//
+//				//				Line 4
+//				CAN_SDATA0 = 0x53;
+//				CAN_SDATA1 = 0x02;
+//				CAN_SDATA2 = 0x64;
+//				CAN_SDATA3 = 0xff;
+//				CAN_SDATA4 = 0xdf;
+//				CAN_SDATA5 = 0x4d;
+//				CAN_SDATA6 = 0x0a;
+//				CAN_SDATA7 = 0x1e;
+//				CanWriteData(0x5E7);
+//
+//				//				Line 5
+//				CAN_SDATA0 = 0x54;
+//				CAN_SDATA1 = 0x02;
+//				CAN_SDATA2 = 0x50;
+//				CAN_SDATA3 = 0xf4;
+//				CAN_SDATA4 = 0xff;
+//				CAN_SDATA5 = 0xa3;
+//				CAN_SDATA6 = 0xf0;
+//				CAN_SDATA7 = 0x41;
+//				CanWriteData(0x5E7);
+//
+//				//				Line 6
+//				CAN_SDATA0 = 0x55;
+//				CAN_SDATA1 = 0x02;
+//				CAN_SDATA2 = 0xe8;
+//				CAN_SDATA3 = 0x10;
+//				CAN_SDATA4 = 0x80;
+//				CAN_SDATA5 = 0x0;
+//				CAN_SDATA6 = 0x0;
+//				CAN_SDATA7 = 0x0;
+//				CanWriteData(0x5E7);
+//
+//				timer.sleep(1000);
+//				CAN_SDATA0 = 0x00;
+//				CAN_SDATA1 = 0x00;
+//				CAN_SDATA2 = 0x00;
+//				CAN_SDATA3 = 0xda;
+//				CAN_SDATA4 = 0x00;
+//				CAN_SDATA5 = 0x00;
+//				CAN_SDATA6 = 0x00;
+//				CAN_SDATA7 = 0x00;
+//				CanWriteData(0x5E7);
+//				}
 			}
 			if(BT.BT_find("close\r"))
 			{
