@@ -394,6 +394,7 @@ void Random_Rect(void);
 void Random_Circle(void);
 void EXTI0_IRQHandler(void);
 void DCMI_IRQHandler(void);
+void DMA2_Stream0_IRQHandler(void);
 #ifdef __cplusplus
 }
 #endif

@@ -8,7 +8,7 @@
 #include <Sensor.h>
 //#include <stdlib.h>
 
-Sensor::Sensor(uint16_t black, uint16_t blue, uint16_t red, uint16_t white, ADC_TypeDef* ADCx, uint8_t channel) {
+Sensor::Sensor(uint16_t black, uint16_t blue, uint16_t red, uint16_t white, ADC_TypeDef* ADCx, uint8_t channel, volatile uint16_t* value) {
 	color[0] = black;
 	color[1] = blue;
 	color[2] = red;
@@ -16,6 +16,8 @@ Sensor::Sensor(uint16_t black, uint16_t blue, uint16_t red, uint16_t white, ADC_
 
 	ADC_x = ADCx;
 	channel_x = channel;
+
+	Value = value;
 
 }
 
@@ -28,9 +30,9 @@ Sensor::~Sensor() {
 }
 
 Sensors_colors_t Sensor::Get_color(void){
-	uint16_t ADC_1 = 0;
+	uint16_t ADC_1 = *Value;
 
-	ADC_1 = TM_ADC_Read(ADC_x,channel_x);
+//	ADC_1 = TM_ADC_Read(ADC_x,channel_x);
 
 	if(abs(ADC_1-color[0])<around[0])
 		return BLACK;

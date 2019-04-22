@@ -6,6 +6,7 @@ src/functions.o: ../src/functions.c ../include/functions.h \
  ../system/include/cmsis/core_cmSimd.h \
  ../system/include/cmsis/system_stm32f4xx.h ../include/stm32f4xx_conf.h \
  ../system/include/stm32f4/stm32f4xx_adc.h \
+ ../system/include/stm32f4/stm32f4xx_dma.h \
  ../system/include/stm32f4/stm32f4xx_exti.h \
  ../system/include/stm32f4/stm32f4xx_gpio.h \
  ../system/include/stm32f4/stm32f4xx_i2c.h \
@@ -37,6 +38,8 @@ src/functions.o: ../src/functions.c ../include/functions.h \
 ../include/stm32f4xx_conf.h:
 
 ../system/include/stm32f4/stm32f4xx_adc.h:
+
+../system/include/stm32f4/stm32f4xx_dma.h:
 
 ../system/include/stm32f4/stm32f4xx_exti.h:
 

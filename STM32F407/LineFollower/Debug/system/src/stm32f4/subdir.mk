@@ -6,6 +6,7 @@
 C_SRCS += \
 ../system/src/stm32f4/misc.c \
 ../system/src/stm32f4/stm32f4xx_adc.c \
+../system/src/stm32f4/stm32f4xx_dma.c \
 ../system/src/stm32f4/stm32f4xx_exti.c \
 ../system/src/stm32f4/stm32f4xx_gpio.c \
 ../system/src/stm32f4/stm32f4xx_i2c.c \
@@ -19,6 +20,7 @@ C_SRCS += \
 OBJS += \
 ./system/src/stm32f4/misc.o \
 ./system/src/stm32f4/stm32f4xx_adc.o \
+./system/src/stm32f4/stm32f4xx_dma.o \
 ./system/src/stm32f4/stm32f4xx_exti.o \
 ./system/src/stm32f4/stm32f4xx_gpio.o \
 ./system/src/stm32f4/stm32f4xx_i2c.o \
@@ -32,6 +34,7 @@ OBJS += \
 C_DEPS += \
 ./system/src/stm32f4/misc.d \
 ./system/src/stm32f4/stm32f4xx_adc.d \
+./system/src/stm32f4/stm32f4xx_dma.d \
 ./system/src/stm32f4/stm32f4xx_exti.d \
 ./system/src/stm32f4/stm32f4xx_gpio.d \
 ./system/src/stm32f4/stm32f4xx_i2c.d \

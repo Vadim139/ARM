@@ -1,3 +1,2 @@
-
-.metadata/
-STM32F103/CAN_USB/
+.metadata
+STM32F407/LineFollower/Debug/

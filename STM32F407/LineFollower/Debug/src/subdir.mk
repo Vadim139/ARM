@@ -18,6 +18,7 @@ C_SRCS += \
 ../src/tm_stm32f4_spi.c 
 
 CPP_SRCS += \
+../src/Engine.cpp \
 ../src/STM32F4_Class.cpp \
 ../src/STM32F4_my.cpp \
 ../src/Sensor.cpp \
@@ -25,6 +26,7 @@ CPP_SRCS += \
 ../src/main.cpp 
 
 OBJS += \
+./src/Engine.o \
 ./src/STM32F3_my.o \
 ./src/STM32F4_Class.o \
 ./src/STM32F4_my.o \
@@ -58,6 +60,7 @@ C_DEPS += \
 ./src/tm_stm32f4_spi.d 
 
 CPP_DEPS += \
+./src/Engine.d \
 ./src/STM32F4_Class.d \
 ./src/STM32F4_my.d \
 ./src/Sensor.d \
@@ -66,17 +69,17 @@ CPP_DEPS += \
 
 
 # Each subdirectory must supply rules for building sources it contributes
-src/%.o: ../src/%.c
-	@echo 'Building file: $<'
-	@echo 'Invoking: GNU ARM Cross C Compiler'
-	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=soft -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -ffreestanding -fno-move-loop-invariants -Wall -Wextra  -g3 -DDEBUG -DOS_USE_SEMIHOSTING -DUSE_STDPERIPH_DRIVER -DSTM32F40_41xxx -DUSE_FULL_ASSERT1 -DTRACE -DOS_USE_TRACE_SEMIHOSTING_DEBUG -DSTM32F407xx -DUSE_HAL_DRIVER_NO -DHSE_VALUE=8000000 -I"../include" -I"../system/include/stm32f4-hal" -I"../system/include" -I"../system/include/cmsis" -I"../system/include/stm32f4" -std=gnu11 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -c -o "$@" "$<"
-	@echo 'Finished building: $<'
-	@echo ' '
-
 src/%.o: ../src/%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: GNU ARM Cross C++ Compiler'
 	arm-none-eabi-g++ -mcpu=cortex-m4 -mthumb -mfloat-abi=soft -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -ffreestanding -fno-move-loop-invariants -Wall -Wextra  -g3 -DDEBUG -DOS_USE_SEMIHOSTING -DUSE_STDPERIPH_DRIVER -DSTM32F40_41xxx -DUSE_FULL_ASSERT1 -DTRACE -DOS_USE_TRACE_SEMIHOSTING_DEBUG -DSTM32F407xx -DUSE_HAL_DRIVER_NO -DHSE_VALUE=8000000 -I"../include" -I"../system/include" -I"../system/include/cmsis" -I"../system/include/stm32f4" -I"../system/include/stm32f4-hal" -std=gnu++11 -fabi-version=0 -fno-exceptions -fno-rtti -fno-use-cxa-atexit -fno-threadsafe-statics -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -c -o "$@" "$<"
+	@echo 'Finished building: $<'
+	@echo ' '
+
+src/%.o: ../src/%.c
+	@echo 'Building file: $<'
+	@echo 'Invoking: GNU ARM Cross C Compiler'
+	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=soft -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -ffreestanding -fno-move-loop-invariants -Wall -Wextra  -g3 -DDEBUG -DOS_USE_SEMIHOSTING -DUSE_STDPERIPH_DRIVER -DSTM32F40_41xxx -DUSE_FULL_ASSERT1 -DTRACE -DOS_USE_TRACE_SEMIHOSTING_DEBUG -DSTM32F407xx -DUSE_HAL_DRIVER_NO -DHSE_VALUE=8000000 -I"../include" -I"../system/include/stm32f4-hal" -I"../system/include" -I"../system/include/cmsis" -I"../system/include/stm32f4" -std=gnu11 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -c -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
