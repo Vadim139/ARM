@@ -14,7 +14,7 @@
 #include "main.h"
 
 #define TIMx TIM4
-#define MIN_PWM 700
+#define MIN_PWM 600
 
 typedef enum {
 	LEFT,
@@ -24,7 +24,9 @@ typedef enum {
 
 typedef enum {
 	GENTLE,
+	GENTLE_ONE,
 	NORMAL,
+	NORMAL_ONE,
 	FAST
 
 } Engine_turn_speed_t;
@@ -35,7 +37,7 @@ public:
 	Engine(uint8_t channel);
 	virtual ~Engine();
 	uint8_t Get_speed(void);
-	void Set_speed(uint8_t speed);
+	void Set_speed(int16_t speed);
 	void Stop();
 	void Full_speed();
 	void Half_speed();
@@ -44,7 +46,7 @@ public:
 	static void Turn(Engine_dir_t dir,Engine_turn_speed_t speed, Engine* left, Engine* right);
 
 private:
-	uint8_t Speed;
+	int16_t Speed;
 	uint8_t Channel;
 
 };

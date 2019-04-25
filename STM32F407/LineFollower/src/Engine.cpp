@@ -6,6 +6,8 @@
  */
 
 #include <Engine.h>
+#include "Timer.h"
+extern Timer timer;
 //#include <stdlib.h>
 
 Engine::Engine(uint8_t channel) {
@@ -25,35 +27,61 @@ uint8_t Engine::Get_speed(void){
 	return Speed;
 }
 
-void Engine::Set_speed(uint8_t speed){
+void Engine::Set_speed(int16_t speed){
 
-	uint8_t offset = MIN_PWM;
-	Speed = speed;
+	uint16_t offset;
 
-	if(speed == 0xFF)
+	if(speed>0){
+		offset = MIN_PWM;
+		Speed = speed;
+
+		if(speed == 0xFF)
+		{
+			offset = 0;
+			speed = 0;
+			Speed = 0;
+		}
+
+		switch (Channel) {
+			case 1:
+				TIM_SetCompare1(TIMx, (uint16_t)(offset + ((float)((float)speed/100) * (1000 - offset))));
+				break;
+			case 2:
+				TIM_SetCompare2(TIMx, (uint16_t)(offset + ((float)((float)speed/100) * (1000 - offset))));
+				break;
+			case 3:
+				TIM_SetCompare3(TIMx, (uint16_t)(offset + ((float)((float)speed/100) * (1000 - offset))));
+				break;
+			case 4:
+				TIM_SetCompare4(TIMx, (uint16_t)(offset + ((float)((float)speed/100) * (1000 - offset))));
+				break;
+			default:
+				break;
+		}
+	}else
 	{
-		offset = 0;
+		offset = MIN_PWM - (uint16_t)(((float)abs(speed)/100) * MIN_PWM);
+		Speed = speed;
 		speed = 0;
-		Speed = 0;
-	}
 
-	switch (Channel) {
-		case 1:
-			TIM_SetCompare1(TIMx, (offset + ((speed/100) * (1000 - offset))));
-			break;
-		case 2:
-			TIM_SetCompare2(TIMx, (offset + ((speed/100) * (1000 - offset))));
-			break;
-		case 3:
-			TIM_SetCompare3(TIMx, (offset + ((speed/100) * (1000 - offset))));
-			break;
-		case 4:
-			TIM_SetCompare4(TIMx, (offset + ((speed/100) * (1000 - offset))));
-			break;
-		default:
-			break;
-	}
+		switch (Channel) {
+			case 1:
+				TIM_SetCompare1(TIMx, offset);
+				break;
+			case 2:
+				TIM_SetCompare2(TIMx, offset);
+				break;
+			case 3:
+				TIM_SetCompare3(TIMx, offset);
+				break;
+			case 4:
+				TIM_SetCompare4(TIMx, offset);
+				break;
+			default:
+				break;
+		}
 
+	}
 }
 
 void Engine::Stop(){
@@ -172,8 +200,25 @@ void Engine::Turn(Engine_dir_t dir,Engine_turn_speed_t speed, Engine* left, Engi
 		case LEFT:
 			switch (speed) {
 				case GENTLE:
-					left->Set_speed(0);
-					right->Set_speed(10);
+					left->Set_speed(-80);
+//					left->Set_speed(0xFF);
+					right->Set_speed(100);
+					timer.sleep(30);
+					right->Set_speed(20);
+					break;
+				case GENTLE_ONE:
+//					left->Set_speed(-50);
+					left->Set_speed(0xFF);
+					right->Set_speed(100);
+					timer.sleep(50);
+					right->Set_speed(100);
+					break;
+				case NORMAL_ONE:
+//					left->Set_speed(-50);
+					left->Set_speed(0xFF);
+					right->Set_speed(100);
+					timer.sleep(50);
+					right->Set_speed(80);
 					break;
 				case NORMAL:
 					if(left->Get_speed() >= 15 && right->Get_speed() <= 85){
@@ -201,8 +246,25 @@ void Engine::Turn(Engine_dir_t dir,Engine_turn_speed_t speed, Engine* left, Engi
 		case RIGHT:
 			switch (speed) {
 				case GENTLE:
-					right->Set_speed(0);
-					left->Set_speed(10);
+					right->Set_speed(-80);
+//					right->Set_speed(0xFF);
+					left->Set_speed(100);
+					timer.sleep(30);
+					left->Set_speed(20);
+					break;
+				case GENTLE_ONE:
+//					right->Set_speed(-50);
+					right->Set_speed(0xFF);
+					left->Set_speed(100);
+					timer.sleep(50);
+					left->Set_speed(100);
+					break;
+				case NORMAL_ONE:
+//					left->Set_speed(-50);
+					left->Set_speed(0xFF);
+					right->Set_speed(100);
+					timer.sleep(50);
+					right->Set_speed(80);
 					break;
 				case NORMAL:
 					if(right->Get_speed() >= 15 && left->Get_speed() <= 85){

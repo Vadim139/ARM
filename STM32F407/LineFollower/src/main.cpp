@@ -256,9 +256,10 @@ void DMA2_Stream0_IRQHandler(void) // Called at 1 KHz for 200 KHz sample rate, L
 // Add code here to process second half of buffer (pong)
 	}
 }
-Engine Eng_left(1);
-Engine Eng_right(2);
+Engine Eng_left(2);
+Engine Eng_right(1);
 
+volatile bool Flag = false;
 int main(void) {
 
 	/* Initialization */
@@ -271,11 +272,12 @@ int main(void) {
 //  Init_SysTick();
 //  SysTick_Config(168);
 
-	printf("Timer initialization...");
+	trace_printf("Timer initialization...");
 	Timer timer;
 	timer.start();
-	printf(" Succeed\n");
+	trace_printf(" Succeed\n");
 
+//	timer.sleep(200);
 //    TM_ADC_Init(ADC2,TM_ADC_Channel_10);//PC0
 //    TM_ADC_Init(ADC1,TM_ADC_Channel_11);//PC1
 //    TM_ADC_Init(ADC1,TM_ADC_Channel_12);//PC2
@@ -283,6 +285,8 @@ int main(void) {
 	ADC_DMA_config();
 //	pwm_init(); //PD12
 	Engine::Init(2);
+//	Eng_left.Set_speed(20);
+//	Eng_right.Set_speed(20);
 
 	//	ADC_1 = TM_ADC_Read(ADC1,TM_ADC_Channel_1);
 
@@ -366,13 +370,67 @@ int main(void) {
 //	Sensor PS(4060,2000,2220,1500,ADC1,TM_ADC_Channel_12);
 //	Sensor PZ(3400,1500,1205,600,ADC1,TM_ADC_Channel_13);
 
-	Sensor LZ(4000, 3400, 3200, 3150, ADC2, TM_ADC_Channel_10, &ADCConvertedValues[0]);
+	Sensor LZ(4000, 3400, 3200, 3150, ADC1, TM_ADC_Channel_10, &ADCConvertedValues[0]);
 	Sensor LS(3800, 1850, 1750, 1150, ADC1, TM_ADC_Channel_11, &ADCConvertedValues[1]);
 	Sensor PS(4000, 3100, 2900, 2550, ADC1, TM_ADC_Channel_12, &ADCConvertedValues[2]);
-	Sensor PZ(3500, 1900, 1800, 1350, ADC3, TM_ADC_Channel_13, &ADCConvertedValues[3]);
+	Sensor PZ(3500, 1900, 1800, 1350, ADC1, TM_ADC_Channel_13, &ADCConvertedValues[3]);
 
+	uint8_t last = 0;
 	while (1) {
+		if(Flag){
 
+			if(LZ.Get_color() == BLACK)
+			{
+//				if(last != 4){
+//					last = 3;
+//					Engine::Turn(LEFT, NORMAL_ONE, &Eng_left, &Eng_right);
+//					timer.sleep(100);
+//				}
+////				Eng_left.Stop();
+////				Eng_right.Stop();
+////				Flag = false;
+			}else
+			if(PZ.Get_color() == BLACK)
+			{
+//				if(last != 3){
+//					last = 4;
+//					Engine::Turn(RIGHT, NORMAL_ONE, &Eng_left, &Eng_right);
+//					timer.sleep(100);
+//				}
+////				Eng_left.Stop();
+////				Eng_right.Stop();
+////				Flag = false;
+			}else
+			if(LS.Get_color() == BLACK && PS.Get_color() == BLACK)
+			{
+				Eng_left.Set_speed(5);
+				Eng_right.Set_speed(5);
+			}else
+			if(LS.Get_color() == BLACK && PS.Get_color() != BLACK)
+			{
+				if(last < 3){
+					last = 1;
+					Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
+				}
+			}else
+			if(LS.Get_color() != BLACK && PS.Get_color() == BLACK)
+			{
+				if(last < 3){
+					last = 2;
+					Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
+				}
+			}else
+			if(LS.Get_color() != BLACK && PS.Get_color() != BLACK)
+			{
+				if(last < 3){
+					if(last == 1)
+						Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
+					if(last == 2)
+						Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
+				}else
+					last = 0;
+			}
+		}
 ////    	ADC_1 = TM_ADC_Read(ADC1,TM_ADC_Channel_10);
 //    	ADC_1 = ADC_GetConversionValue(ADC2);
 //    	uint16tostr(ADCs1, ADC_1, 10);
@@ -394,8 +452,8 @@ int main(void) {
 //    	trace_printf("ADC2: %d\n",ADCConvertedValues[0]);
 //    	trace_printf("LZ: %d   LS: %d   PS: %d   PZ: %d   \n",ADCConvertedValues[0],ADCConvertedValues[1],ADCConvertedValues[2],ADCConvertedValues[3]);
 //    	trace_printf("ADC1: %s   ADC2: %s   ADC3: %s   ADC4: %s   \n",ADCs1,ADCs2,ADCs3,ADCs4);
-		trace_printf("LZ: %d   LS: %d   PS: %d   PZ: %d   \n", LZ.Get_color(),
-				LS.Get_color(), PS.Get_color(), PZ.Get_color());
+//		trace_printf("LZ: %d   LS: %d   PS: %d   PZ: %d   \n", LZ.Get_color(),
+//				LS.Get_color(), PS.Get_color(), PZ.Get_color());
 //    	if(LZ.Get_color() == BLACK)
 //    	{
 //    	    TIM_SetCompare1(TIM4, 0);
@@ -417,7 +475,7 @@ int main(void) {
 //    	    TIM_SetCompare2(TIM4, 0);
 //    	}
 
-		timer.sleep(100);
+//		timer.sleep(100);
 //
 //    if(TIM_GetFlagStatus(TIM1,TIM_FLAG_CC1)==SET)
 //
@@ -497,8 +555,9 @@ void EXTI0_IRQHandler(void) {
 
 //	  puts("hi");
 		delay_ms(500);
-		Eng_left.Half_speed();
-		Eng_right.Half_speed();
+		Eng_left.Set_speed(5);
+		Eng_right.Set_speed(5);
+		Flag = true;
 //		TIM_SetCompare1(TIM4, 700);
 //		TIM_SetCompare2(TIM4, 700);
 
