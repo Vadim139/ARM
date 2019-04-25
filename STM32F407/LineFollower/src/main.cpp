@@ -370,17 +370,23 @@ int main(void) {
 //	Sensor PS(4060,2000,2220,1500,ADC1,TM_ADC_Channel_12);
 //	Sensor PZ(3400,1500,1205,600,ADC1,TM_ADC_Channel_13);
 
-	Sensor LZ(4000, 3400, 3200, 3150, ADC1, TM_ADC_Channel_10, &ADCConvertedValues[0]);
-	Sensor LS(3800, 1850, 1750, 1150, ADC1, TM_ADC_Channel_11, &ADCConvertedValues[1]);
-	Sensor PS(4000, 3100, 2900, 2550, ADC1, TM_ADC_Channel_12, &ADCConvertedValues[2]);
-	Sensor PZ(3500, 1900, 1800, 1350, ADC1, TM_ADC_Channel_13, &ADCConvertedValues[3]);
+//	Sensor LZ(4000, 3400, 3200, 3150, ADC1, TM_ADC_Channel_10, &ADCConvertedValues[0]);
+//	Sensor LS(3800, 1850, 1750, 1150, ADC1, TM_ADC_Channel_11, &ADCConvertedValues[1]);
+//	Sensor PS(4000, 3100, 2900, 2550, ADC1, TM_ADC_Channel_12, &ADCConvertedValues[2]);
+//	Sensor PZ(3500, 1900, 1800, 1350, ADC1, TM_ADC_Channel_13, &ADCConvertedValues[3]);
 
-	uint8_t last = 0;
+	Sensor LZ(3900, 3400, 3200, 3150, ADC1, TM_ADC_Channel_10, &ADCConvertedValues[0]);
+	Sensor LS(3700, 1850, 1750, 1150, ADC1, TM_ADC_Channel_11, &ADCConvertedValues[1]);
+	Sensor PS(3900, 3100, 2900, 2550, ADC1, TM_ADC_Channel_12, &ADCConvertedValues[2]);
+	Sensor PZ(3400, 1900, 1800, 1350, ADC1, TM_ADC_Channel_13, &ADCConvertedValues[3]);
+
+	uint8_t Last_inner = 0, Last_outer = 0;
 	while (1) {
 		if(Flag){
 
 			if(LZ.Get_color() == BLACK)
 			{
+//				Last_outer = LEFT_S;
 //				if(last != 4){
 //					last = 3;
 //					Engine::Turn(LEFT, NORMAL_ONE, &Eng_left, &Eng_right);
@@ -389,9 +395,10 @@ int main(void) {
 ////				Eng_left.Stop();
 ////				Eng_right.Stop();
 ////				Flag = false;
-			}else
+			}
 			if(PZ.Get_color() == BLACK)
 			{
+//				Last_outer = RIGHT_S;
 //				if(last != 3){
 //					last = 4;
 //					Engine::Turn(RIGHT, NORMAL_ONE, &Eng_left, &Eng_right);
@@ -400,37 +407,49 @@ int main(void) {
 ////				Eng_left.Stop();
 ////				Eng_right.Stop();
 ////				Flag = false;
-			}else
+			}
 			if(LS.Get_color() == BLACK && PS.Get_color() == BLACK)
 			{
-				Eng_left.Set_speed(5);
-				Eng_right.Set_speed(5);
+				Eng_left.Set_speed(100);
+				Eng_right.Set_speed(100);
+				timer.sleep(30);
+				Eng_left.Set_speed(15);
+				Eng_right.Set_speed(15);
 			}else
 			if(LS.Get_color() == BLACK && PS.Get_color() != BLACK)
 			{
-				if(last < 3){
-					last = 1;
+//				if(Last_inner < 3){
+					Last_inner = LEFT_S;
 					Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
-				}
+//				}
 			}else
 			if(LS.Get_color() != BLACK && PS.Get_color() == BLACK)
 			{
-				if(last < 3){
-					last = 2;
+//				if(Last_inner < 3){
+					Last_inner = RIGHT_S;
 					Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
-				}
+//				}
 			}else
 			if(LS.Get_color() != BLACK && PS.Get_color() != BLACK)
 			{
-				if(last < 3){
-					if(last == 1)
+				if(Last_outer == 0){
+					if(Last_inner == LEFT_S)
 						Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
-					if(last == 2)
+					if(Last_inner == RIGHT_S)
 						Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
-				}else
-					last = 0;
+				}else{
+					if(Last_outer == LEFT_S)
+						Engine::Turn(LEFT, NORMAL_ONE, &Eng_left, &Eng_right);
+					if(Last_outer == RIGHT_S)
+						Engine::Turn(RIGHT, NORMAL_ONE, &Eng_left, &Eng_right);
+					Last_outer = 0;
+				}
 			}
 		}
+//		trace_printf("LZ: %d   LS: %d   PS: %d   PZ: %d   \n", LZ.Get_color(),
+//				LS.Get_color(), PS.Get_color(), PZ.Get_color());
+//		trace_printf("LZ: %d   LS: %d   PS: %d   PZ: %d   \n", ADCConvertedValues[0],
+//				ADCConvertedValues[1], ADCConvertedValues[2], ADCConvertedValues[3]);
 ////    	ADC_1 = TM_ADC_Read(ADC1,TM_ADC_Channel_10);
 //    	ADC_1 = ADC_GetConversionValue(ADC2);
 //    	uint16tostr(ADCs1, ADC_1, 10);
@@ -541,12 +560,7 @@ int main(void) {
 
 	}
 
-//  while (1) {
-//		printf("%d\n", (uint32_t) TIM2->CNT); // show counts // 14
-//		for (int i = 0; i < 1000000; i++) {
-//		}; // waste time
-//
-//	}
+
 
 }
 
@@ -558,8 +572,6 @@ void EXTI0_IRQHandler(void) {
 		Eng_left.Set_speed(5);
 		Eng_right.Set_speed(5);
 		Flag = true;
-//		TIM_SetCompare1(TIM4, 700);
-//		TIM_SetCompare2(TIM4, 700);
 
 		/* Clear the EXTI line 0 pending bit */
 		EXTI_ClearITPendingBit(EXTI_Line0);

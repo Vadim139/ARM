@@ -24,6 +24,13 @@ typedef enum {
 
 } Sensors_colors_t;
 
+typedef enum {
+	NONE,
+	LEFT_S,
+	RIGHT_S
+
+} Last_side_t;
+
 
 class Sensor {
 public:

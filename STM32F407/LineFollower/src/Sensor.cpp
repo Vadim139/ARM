@@ -30,20 +30,21 @@ Sensor::~Sensor() {
 }
 
 Sensors_colors_t Sensor::Get_color(void){
-	uint16_t ADC_1 = *Value;
-
+	volatile uint16_t ADC_1 = *Value;
+	int16_t a = ADC_1-color[0];
+	uint16_t b = abs(a);
 //	ADC_1 = TM_ADC_Read(ADC_x,channel_x);
 
-	if(abs(ADC_1-color[0])<around[0])
+	if(abs(*Value-color[0])<around[0])
 		return BLACK;
 
-	if(abs(ADC_1-color[1])<around[1])
+	if(abs(*Value-color[1])<around[1])
 		return BLUE;
 
-	if(abs(ADC_1-color[2])<around[2])
+	if(abs(*Value-color[2])<around[2])
 		return RED;
 
-	if(abs(ADC_1-color[3])<around[3])
+	if(abs(*Value-color[3])<around[3])
 		return WHITE;
 
 

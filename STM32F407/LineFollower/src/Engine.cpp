@@ -211,7 +211,7 @@ void Engine::Turn(Engine_dir_t dir,Engine_turn_speed_t speed, Engine* left, Engi
 					left->Set_speed(0xFF);
 					right->Set_speed(100);
 					timer.sleep(50);
-					right->Set_speed(100);
+					right->Set_speed(60);
 					break;
 				case NORMAL_ONE:
 //					left->Set_speed(-50);
@@ -257,7 +257,7 @@ void Engine::Turn(Engine_dir_t dir,Engine_turn_speed_t speed, Engine* left, Engi
 					right->Set_speed(0xFF);
 					left->Set_speed(100);
 					timer.sleep(50);
-					left->Set_speed(100);
+					left->Set_speed(60);
 					break;
 				case NORMAL_ONE:
 //					left->Set_speed(-50);
