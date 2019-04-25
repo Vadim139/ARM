@@ -32,6 +32,9 @@ void Engine::Set_speed(int16_t speed){
 	uint16_t offset;
 
 	if(speed>0){
+		if(speed>100)
+			speed = 100;
+
 		offset = MIN_PWM;
 		Speed = speed;
 

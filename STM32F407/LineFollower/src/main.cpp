@@ -30,6 +30,13 @@ __IO TestStatus TransferStatus = FAILED;
 
 #define TRUE true
 #define FALSE false
+#define KLZ 30
+#define KPZ 30
+#define KLS 10
+#define KPS 10
+#define KPE 500.0
+#define KIE 0
+#define KDE 0
 
 //void GPIOAinit_TIM2_ETR(void) {
 //GPIO_InitTypeDef GPIO_InitStructure; // 2
@@ -376,60 +383,39 @@ int main(void) {
 	Sensor PZ(3500, 1900, 1800, 1350, ADC1, TM_ADC_Channel_13, &ADCConvertedValues[3]);
 
 	uint8_t last = 0;
+	double e_c=0,e_p=0, e_po=0, e_a=0,u=0;
 	while (1) {
+		timer.sleep(10);
 		if(Flag){
-
+			e_p=e_a;
+			e_a=0;
 			if(LZ.Get_color() == BLACK)
 			{
-//				if(last != 4){
-//					last = 3;
-//					Engine::Turn(LEFT, NORMAL_ONE, &Eng_left, &Eng_right);
-//					timer.sleep(100);
-//				}
-////				Eng_left.Stop();
-////				Eng_right.Stop();
-////				Flag = false;
-			}else
+				e_a=e_a-KLZ;
+			}
 			if(PZ.Get_color() == BLACK)
 			{
-//				if(last != 3){
-//					last = 4;
-//					Engine::Turn(RIGHT, NORMAL_ONE, &Eng_left, &Eng_right);
-//					timer.sleep(100);
-//				}
-////				Eng_left.Stop();
-////				Eng_right.Stop();
-////				Flag = false;
-			}else
-			if(LS.Get_color() == BLACK && PS.Get_color() == BLACK)
-			{
-				Eng_left.Set_speed(5);
-				Eng_right.Set_speed(5);
-			}else
-			if(LS.Get_color() == BLACK && PS.Get_color() != BLACK)
-			{
-				if(last < 3){
-					last = 1;
-					Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
-				}
-			}else
-			if(LS.Get_color() != BLACK && PS.Get_color() == BLACK)
-			{
-				if(last < 3){
-					last = 2;
-					Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
-				}
-			}else
-			if(LS.Get_color() != BLACK && PS.Get_color() != BLACK)
-			{
-				if(last < 3){
-					if(last == 1)
-						Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
-					if(last == 2)
-						Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
-				}else
-					last = 0;
+				e_a=e_a+KPZ;
 			}
+			if(LS.Get_color() == BLACK)
+			{
+				e_a=e_a-KLS;
+			}
+			if(PS.Get_color() == BLACK)
+			{
+				e_a=e_a+KPS;
+			}
+			e_c=e_c+(0.01*(e_p+e_a)/2.0);
+			e_po=(e_a-e_p)/0.01;
+			u=(KPE*e_a)+(KIE*e_c)+(KDE*e_po);
+
+//			Eng_left.Set_speed(-100+u);
+//			Eng_right.Set_speed(-100-u);
+//			trace_printf("%d\n",(int)e_a);
+					trace_printf("LZ: %d   LS: %d   PS: %d   PZ: %d   \n", LZ.Get_color(),
+							LS.Get_color(), PS.Get_color(), PZ.Get_color());
+//			trace_printf("u: %f   e_c: %f   e_po: %f   e_a: %f   e_p: %f\n",u ,e_c,e_po,e_a,e_p);
+//			trace_printf("LZ: %d   LS: %d   PS: %d   PZ: %d\n",ADCConvertedValues[0],ADCConvertedValues[1],ADCConvertedValues[2],ADCConvertedValues[3]);
 		}
 ////    	ADC_1 = TM_ADC_Read(ADC1,TM_ADC_Channel_10);
 //    	ADC_1 = ADC_GetConversionValue(ADC2);
@@ -555,8 +541,8 @@ void EXTI0_IRQHandler(void) {
 
 //	  puts("hi");
 		delay_ms(500);
-		Eng_left.Set_speed(5);
-		Eng_right.Set_speed(5);
+//		Eng_left.Set_speed(5);
+//		Eng_right.Set_speed(5);
 		Flag = true;
 //		TIM_SetCompare1(TIM4, 700);
 //		TIM_SetCompare2(TIM4, 700);
