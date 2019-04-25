@@ -262,6 +262,7 @@ Engine Eng_right(1);
 volatile bool Flag = false;
 int main(void) {
 
+
 	/* Initialization */
 
 	RCC_HSEConfig(RCC_HSE_ON);
@@ -375,10 +376,10 @@ int main(void) {
 //	Sensor PS(4000, 3100, 2900, 2550, ADC1, TM_ADC_Channel_12, &ADCConvertedValues[2]);
 //	Sensor PZ(3500, 1900, 1800, 1350, ADC1, TM_ADC_Channel_13, &ADCConvertedValues[3]);
 
-	Sensor LZ(3900, 3400, 3200, 3150, ADC1, TM_ADC_Channel_10, &ADCConvertedValues[0]);
+	Sensor LZ(3700, 3400, 3200, 3150, ADC1, TM_ADC_Channel_10, &ADCConvertedValues[0]);
 	Sensor LS(3700, 1850, 1750, 1150, ADC1, TM_ADC_Channel_11, &ADCConvertedValues[1]);
-	Sensor PS(3900, 3100, 2900, 2550, ADC1, TM_ADC_Channel_12, &ADCConvertedValues[2]);
-	Sensor PZ(3400, 1900, 1800, 1350, ADC1, TM_ADC_Channel_13, &ADCConvertedValues[3]);
+	Sensor PS(4000, 3100, 2900, 2550, ADC1, TM_ADC_Channel_12, &ADCConvertedValues[2]);
+	Sensor PZ(3300, 1900, 1800, 1350, ADC1, TM_ADC_Channel_13, &ADCConvertedValues[3]);
 
 	uint8_t Last_inner = 0, Last_outer = 0;
 	while (1) {
@@ -410,11 +411,11 @@ int main(void) {
 			}
 			if(LS.Get_color() == BLACK && PS.Get_color() == BLACK)
 			{
-				Eng_left.Set_speed(100);
-				Eng_right.Set_speed(100);
-				timer.sleep(30);
-				Eng_left.Set_speed(15);
-				Eng_right.Set_speed(15);
+//				Eng_left.Set_speed(100);
+//				Eng_right.Set_speed(100);
+//				timer.sleep(30);
+				Eng_left.Set_speed(5);
+				Eng_right.Set_speed(5);
 			}else
 			if(LS.Get_color() == BLACK && PS.Get_color() != BLACK)
 			{
@@ -437,12 +438,29 @@ int main(void) {
 						Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
 					if(Last_inner == RIGHT_S)
 						Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
-				}else{
-					if(Last_outer == LEFT_S)
+				}else if(Last_outer<3){
+					if(Last_outer == LEFT_S){
 						Engine::Turn(LEFT, NORMAL_ONE, &Eng_left, &Eng_right);
-					if(Last_outer == RIGHT_S)
+//						Last_outer = 3;
+					}
+					if(Last_outer == RIGHT_S){
 						Engine::Turn(RIGHT, NORMAL_ONE, &Eng_left, &Eng_right);
-					Last_outer = 0;
+//						Last_outer = 4;
+					}
+				}else
+				{
+//					Eng_left.Set_speed(100);
+//					Eng_right.Set_speed(100);
+//					timer.sleep(30);
+//					Eng_left.Set_speed(5);
+//					Eng_right.Set_speed(5);
+//					Last_outer = 0;
+////					if(Last_outer == 3){
+////
+////					}else
+////					{
+//
+////					}
 				}
 			}
 		}
@@ -450,7 +468,7 @@ int main(void) {
 //				LS.Get_color(), PS.Get_color(), PZ.Get_color());
 //		trace_printf("LZ: %d   LS: %d   PS: %d   PZ: %d   \n", ADCConvertedValues[0],
 //				ADCConvertedValues[1], ADCConvertedValues[2], ADCConvertedValues[3]);
-////    	ADC_1 = TM_ADC_Read(ADC1,TM_ADC_Channel_10);
+//    	ADC_1 = TM_ADC_Read(ADC1,TM_ADC_Channel_10);
 //    	ADC_1 = ADC_GetConversionValue(ADC2);
 //    	uint16tostr(ADCs1, ADC_1, 10);
 ////    	trace_printf("ADC1: %s\n",ADCs1);
@@ -569,6 +587,9 @@ void EXTI0_IRQHandler(void) {
 
 //	  puts("hi");
 		delay_ms(500);
+		Eng_left.Set_speed(70);
+		Eng_right.Set_speed(70);
+		delay_ms(10);
 		Eng_left.Set_speed(5);
 		Eng_right.Set_speed(5);
 		Flag = true;
