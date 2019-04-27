@@ -388,12 +388,8 @@
 		};
 
 //void uint16tostr(char buf[], uint32_t d, uint8_t base);
-void Demo_MMIA(void);
-void Random_Lines(void);
-void Random_Rect(void);
-void Random_Circle(void);
 void EXTI0_IRQHandler(void);
-void DCMI_IRQHandler(void);
+void TIM5_IRQHandler(void);
 void DMA2_Stream0_IRQHandler(void);
 #ifdef __cplusplus
 }

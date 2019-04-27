@@ -14,6 +14,7 @@
 #include "diag/Trace.h"
 #include "Sensor.h"
 #include "Engine.h"
+#include "5110.h"
 //#include "stm32f4xx.h"
 
 uint32_t k[10];
@@ -31,132 +32,6 @@ __IO TestStatus TransferStatus = FAILED;
 #define TRUE true
 #define FALSE false
 
-//void GPIOAinit_TIM2_ETR(void) {
-//GPIO_InitTypeDef GPIO_InitStructure; // 2
-// RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE); // 4
-//
-// GPIO_PinAFConfig(GPIOA, GPIO_PinSource0, GPIO_AF_TIM2); // PA15:TIM2_Ch1/ETR // 6
-// GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0; // 8
-// GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF; // 9
-// GPIO_Init(GPIOA, &GPIO_InitStructure); // 10
-//}
-
-//void TIM2init_counter(void) { // counting from ETR
-//TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure; // 2
-//
-// RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE); // 4
-// TIM_TimeBaseInitStructure.TIM_Prescaler = 0; // 6
-// TIM_TimeBaseInitStructure.TIM_CounterMode = TIM_CounterMode_Up; // 7
-// TIM_TimeBaseInitStructure.TIM_Period = 100000; // 8
-// TIM_TimeBaseInitStructure.TIM_ClockDivision = TIM_CKD_DIV1; // 9
-//
-// TIM_TimeBaseInit(TIM2, &TIM_TimeBaseInitStructure); // 10
-//
-// TIM_ETRClockMode2Config(TIM2, TIM_ExtTRGPSC_OFF, TIM_ExtTRGPolarity_NonInverted, 0x00); // 12
-//
-// TIM_Cmd(TIM2, ENABLE); // 14
-//}
-
-//void TIM1_ICConfig(void)
-//
-//{
-//	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;
-//	TIM_ICInitTypeDef TIM_ICInitStructure;
-//  RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1,ENABLE);
-//
-////   //Time initialization
-//
-//  TIM_TimeBaseInitStructure.TIM_ClockDivision = TIM_CKD_DIV1; //Control with dead zone.
-//
-//  TIM_TimeBaseInitStructure.TIM_CounterMode = TIM_CounterMode_Up;  //Counter direction
-//
-//  TIM_TimeBaseInitStructure.TIM_Prescaler = 84-1;   //Timer clock = sysclock /(TIM_Prescaler+1) = 2M
-//
-//  TIM_TimeBaseInitStructure.TIM_RepetitionCounter = 0;
-//
-//  TIM_TimeBaseInitStructure.TIM_Period = 0xFFFF;
-//
-////Period = (TIM counter clock / TIM output clock) - 1 = 40Hz
-//
-//  GPIO_InitTypeDef GPIO_InitStructure; // 2
-//   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE); // 4
-//
-//   GPIO_PinAFConfig(GPIOA, GPIO_PinSource8, GPIO_AF_TIM1); // PA15:TIM2_Ch1/ETR // 6
-//   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8; // 8
-//   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF; // 9
-//   GPIO_Init(GPIOA, &GPIO_InitStructure); // 10
-//
-//  TIM_TimeBaseInit(TIM1,&TIM_TimeBaseInitStructure);
-//
-//  TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
-//
-//  TIM_ICInitStructure.TIM_ICFilter = 0;
-//
-//  TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Rising;
-//
-//  TIM_ICInitStructure.TIM_ICPrescaler = TIM_ICPSC_DIV1;
-//
-//  TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI;
-//
-//  TIM_ICInit(TIM1,&TIM_ICInitStructure);
-//
-//  TIM_Cmd(TIM1,ENABLE);
-//
-//}
-
-//void TIM4_OCConfig(void)
-//
-//{
-//	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;
-//	TIM_OCInitTypeDef TIM_OCInitStructure;
-//  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4,ENABLE);
-//
-//  TIM_TimeBaseInitStructure.TIM_ClockDivision = TIM_CKD_DIV1;
-//
-//  TIM_TimeBaseInitStructure.TIM_CounterMode = TIM_CounterMode_Up;
-//
-//  TIM_TimeBaseInitStructure.TIM_Prescaler =  0;
-//
-//  TIM_TimeBaseInitStructure.TIM_RepetitionCounter =0;
-//
-//  TIM_TimeBaseInitStructure.TIM_Period = 42000-1;   //Cycle: 42M/(42000)= 1K
-//
-//  GPIO_InitTypeDef GPIO_InitStructure;
-//
-//  /* GPIOD clock enable */
-//  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
-//
-//  /* GPIOD Configuration: TIM3 CH1 (PD12) and TIM3 CH2 (PD13) */
-//  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12 || GPIO_Pin_13 ;
-//  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
-//  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
-//  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-//  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP ;
-//  GPIO_Init(GPIOD, &GPIO_InitStructure);
-//
-//  /* Connect TIM3 pins to AF2 */
-//  GPIO_PinAFConfig(GPIOD, GPIO_PinSource12, GPIO_AF_TIM4);
-//  GPIO_PinAFConfig(GPIOD, GPIO_PinSource13, GPIO_AF_TIM4);
-//
-//  TIM_TimeBaseInit(TIM4,&TIM_TimeBaseInitStructure);
-//
-//
-//  TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_Toggle;
-//
-//  TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-//
-//  TIM_OCInitStructure.TIM_Pulse = 10000;
-//
-//  TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
-//
-//  TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Set;
-//
-//
-//  TIM_OC1Init(TIM4,&TIM_OCInitStructure);
-//
-//  TIM_Cmd(TIM4,ENABLE);
-//
-//}
 #define BUFFERSIZE 4 // 200KHz x2 HT/TC at 1KHz
 __IO uint16_t ADCConvertedValues[BUFFERSIZE];
 #include "stm32f4xx.h"
@@ -186,7 +61,7 @@ void ADC_DMA_config() {
 	ADC_InitStructure.ADC_ScanConvMode = ENABLE; // 1 Channel
 	ADC_InitStructure.ADC_ContinuousConvMode = ENABLE; // Conversions Triggered
 	ADC_InitStructure.ADC_ExternalTrigConvEdge =
-			ADC_ExternalTrigConvEdge_Rising;
+	ADC_ExternalTrigConvEdge_Rising;
 	ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_T2_TRGO;
 	ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
 	ADC_InitStructure.ADC_NbrOfConversion = 4;
@@ -258,46 +133,88 @@ void DMA2_Stream0_IRQHandler(void) // Called at 1 KHz for 200 KHz sample rate, L
 }
 Engine Eng_left(2);
 Engine Eng_right(1);
-
+char temp[50];
 volatile bool Flag = false;
-int main(void) {
 
+void TIM2_Configuration(void) {
+	GPIO_InitTypeDef GPIO_InitStructure;
+	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
+	/* GPIOC clock enable */
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+	/* TIM3 clock enable */
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+	/* GPIOA Configuration: TIM2 CH1 (PA15) */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF; // Input/Output controlled by peripheral
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP; // Button to ground expectation
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	/* Connect TIM2 pins to AF */
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource15, GPIO_AF_TIM2);
+	TIM_TimeBaseStructure.TIM_Period = 65535;
+	TIM_TimeBaseStructure.TIM_Prescaler = 0;
+	TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+	TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
+	TIM_TIxExternalClockConfig(TIM2, TIM_TIxExternalCLK1Source_TI1,
+			TIM_ICPolarity_Falling, 0);
+	TIM_Cmd(TIM2, ENABLE);
+}
 
-	/* Initialization */
+void TIM3_Configuration(void) {
+	GPIO_InitTypeDef GPIO_InitStructure;
+	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
+	/* GPIOC clock enable */
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
+	/* TIM3 clock enable */
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+	/* GPIOA Configuration: TIM3 CH1 (PC6) */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF; // Input/Output controlled by peripheral
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP; // Button to ground expectation
+	GPIO_Init(GPIOC, &GPIO_InitStructure);
+	/* Connect TIM3 pins to AF */
+	GPIO_PinAFConfig(GPIOC, GPIO_PinSource6, GPIO_AF_TIM3);
+	TIM_TimeBaseStructure.TIM_Period = 65535;
+	TIM_TimeBaseStructure.TIM_Prescaler = 0;
+	TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+	TIM_TIxExternalClockConfig(TIM3, TIM_TIxExternalCLK1Source_TI1,
+			TIM_ICPolarity_Falling, 0);
+	TIM_Cmd(TIM3, ENABLE);
+}
 
-	RCC_HSEConfig(RCC_HSE_ON);
-	while (!RCC_WaitForHSEStartUp()) {
-	}
+void TIM5_INT_Init() {
+	// Enable clock for TIM2
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM5, ENABLE);
 
-//
-//  Init_SysTick();
-//  SysTick_Config(168);
+	// (Hz) = 84MHz / ((839 + 1) * (9999 + 1)) = 10 Hz
+	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStruct;
+	TIM_TimeBaseInitStruct.TIM_Prescaler = 839;
+	TIM_TimeBaseInitStruct.TIM_Period = 9999;
+	TIM_TimeBaseInitStruct.TIM_ClockDivision = TIM_CKD_DIV1;
+	TIM_TimeBaseInitStruct.TIM_CounterMode = TIM_CounterMode_Up;
 
-	trace_printf("Timer initialization...");
-	Timer timer;
-	timer.start();
-	trace_printf(" Succeed\n");
+	// TIM2 initialize
+	TIM_TimeBaseInit(TIM5, &TIM_TimeBaseInitStruct);
+	// Enable TIM2 interrupt
+	TIM_ITConfig(TIM5, TIM_IT_Update, ENABLE);
+	// Start TIM2
+	TIM_Cmd(TIM5, ENABLE);
 
-//	timer.sleep(200);
-//    TM_ADC_Init(ADC2,TM_ADC_Channel_10);//PC0
-//    TM_ADC_Init(ADC1,TM_ADC_Channel_11);//PC1
-//    TM_ADC_Init(ADC1,TM_ADC_Channel_12);//PC2
-//    TM_ADC_Init(ADC3,TM_ADC_Channel_13);//PC3
-	ADC_DMA_config();
-//	pwm_init(); //PD12
-	Engine::Init(2);
-//	Eng_left.Set_speed(20);
-//	Eng_right.Set_speed(20);
+	NVIC_InitTypeDef NVIC_InitStruct;
+	NVIC_InitStruct.NVIC_IRQChannel = TIM5_IRQn;
+	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 2;
+	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStruct);
+}
 
-	//	ADC_1 = TM_ADC_Read(ADC1,TM_ADC_Channel_1);
-
-//    GPIOAinit_TIM2_ETR(); // GPIO clock enable, digital pin definitions // 8
-//    TIM2init_counter(); // Timer 2 as counter: ETR input // 9
-//    TIM1_ICConfig();
-//	TIM4_OCConfig();
-//	TIM_SetCompare1(TIM4, 0);
-//	TIM_SetCompare2(TIM4, 0);
-
+void EXTI_Conf() {
 	GPIO_InitTypeDef GPIO_InitStruct;
 	EXTI_InitTypeDef EXTI_InitStruct;
 	NVIC_InitTypeDef NVIC_InitStruct;
@@ -340,6 +257,41 @@ int main(void) {
 	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
 	/* Add to NVIC */
 	NVIC_Init(&NVIC_InitStruct);
+}
+volatile u16 RPM_L = 0;
+volatile u16 RPM_P = 0;
+
+int main(void) {
+
+	/* Initialization */
+
+	RCC_HSEConfig(RCC_HSE_ON);
+	while (!RCC_WaitForHSEStartUp()) {
+	}
+
+//
+//  Init_SysTick();
+//  SysTick_Config(168);
+
+	trace_printf("Timer initialization...");
+	Timer timer;
+	timer.start();
+	trace_printf(" Succeed\n");
+
+	ADC_DMA_config();
+
+	LCD5110_init();
+
+	TIM2_Configuration();
+	TIM3_Configuration();
+	TIM5_INT_Init();
+
+	EXTI_Conf();
+//	LCD5110_write_string("1234567890");
+
+	Engine::Init(2);
+//	Eng_left.Set_speed(20);
+//	Eng_right.Set_speed(20);
 
 //    EXTI_Config(GPIOA,GPIO_Pin_0,EXTI_Trigger_Rising);
 	uint32_t CaptureNumber = 0;
@@ -376,17 +328,20 @@ int main(void) {
 //	Sensor PS(4000, 3100, 2900, 2550, ADC1, TM_ADC_Channel_12, &ADCConvertedValues[2]);
 //	Sensor PZ(3500, 1900, 1800, 1350, ADC1, TM_ADC_Channel_13, &ADCConvertedValues[3]);
 
-	Sensor LZ(3700, 3400, 3200, 3150, ADC1, TM_ADC_Channel_10, &ADCConvertedValues[0]);
-	Sensor LS(3700, 1850, 1750, 1150, ADC1, TM_ADC_Channel_11, &ADCConvertedValues[1]);
-	Sensor PS(4000, 3100, 2900, 2550, ADC1, TM_ADC_Channel_12, &ADCConvertedValues[2]);
-	Sensor PZ(3300, 1900, 1800, 1350, ADC1, TM_ADC_Channel_13, &ADCConvertedValues[3]);
+	Sensor LZ(3700, 3400, 3200, 3150, ADC1, TM_ADC_Channel_10,
+			&ADCConvertedValues[0]);
+	Sensor LS(3700, 1850, 1750, 1150, ADC1, TM_ADC_Channel_11,
+			&ADCConvertedValues[1]);
+	Sensor PS(4000, 3100, 2900, 2550, ADC1, TM_ADC_Channel_12,
+			&ADCConvertedValues[2]);
+	Sensor PZ(3300, 1900, 1800, 1350, ADC1, TM_ADC_Channel_13,
+			&ADCConvertedValues[3]);
 
 	uint8_t Last_inner = 0, Last_outer = 0;
 	while (1) {
-		if(Flag){
+		if (Flag) {
 
-			if(LZ.Get_color() == BLACK)
-			{
+			if (LZ.Get_color() == BLACK) {
 //				Last_outer = LEFT_S;
 //				if(last != 4){
 //					last = 3;
@@ -397,8 +352,7 @@ int main(void) {
 ////				Eng_right.Stop();
 ////				Flag = false;
 			}
-			if(PZ.Get_color() == BLACK)
-			{
+			if (PZ.Get_color() == BLACK) {
 //				Last_outer = RIGHT_S;
 //				if(last != 3){
 //					last = 4;
@@ -409,46 +363,38 @@ int main(void) {
 ////				Eng_right.Stop();
 ////				Flag = false;
 			}
-			if(LS.Get_color() == BLACK && PS.Get_color() == BLACK)
-			{
+			if (LS.Get_color() == BLACK && PS.Get_color() == BLACK) {
 //				Eng_left.Set_speed(100);
 //				Eng_right.Set_speed(100);
 //				timer.sleep(30);
 				Eng_left.Set_speed(5);
 				Eng_right.Set_speed(5);
-			}else
-			if(LS.Get_color() == BLACK && PS.Get_color() != BLACK)
-			{
+			} else if (LS.Get_color() == BLACK && PS.Get_color() != BLACK) {
 //				if(Last_inner < 3){
-					Last_inner = LEFT_S;
-					Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
+				Last_inner = LEFT_S;
+				Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
 //				}
-			}else
-			if(LS.Get_color() != BLACK && PS.Get_color() == BLACK)
-			{
+			} else if (LS.Get_color() != BLACK && PS.Get_color() == BLACK) {
 //				if(Last_inner < 3){
-					Last_inner = RIGHT_S;
-					Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
+				Last_inner = RIGHT_S;
+				Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
 //				}
-			}else
-			if(LS.Get_color() != BLACK && PS.Get_color() != BLACK)
-			{
-				if(Last_outer == 0){
-					if(Last_inner == LEFT_S)
+			} else if (LS.Get_color() != BLACK && PS.Get_color() != BLACK) {
+				if (Last_outer == 0) {
+					if (Last_inner == LEFT_S)
 						Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
-					if(Last_inner == RIGHT_S)
+					if (Last_inner == RIGHT_S)
 						Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
-				}else if(Last_outer<3){
-					if(Last_outer == LEFT_S){
+				} else if (Last_outer < 3) {
+					if (Last_outer == LEFT_S) {
 						Engine::Turn(LEFT, NORMAL_ONE, &Eng_left, &Eng_right);
 //						Last_outer = 3;
 					}
-					if(Last_outer == RIGHT_S){
+					if (Last_outer == RIGHT_S) {
 						Engine::Turn(RIGHT, NORMAL_ONE, &Eng_left, &Eng_right);
 //						Last_outer = 4;
 					}
-				}else
-				{
+				} else {
 //					Eng_left.Set_speed(100);
 //					Eng_right.Set_speed(100);
 //					timer.sleep(30);
@@ -464,6 +410,20 @@ int main(void) {
 				}
 			}
 		}
+		LCD5110_set_XY(0, 0);
+		sprintf(temp, "LZ: %d   LS: %d PS: %d   PZ: %d", LZ.Get_color(),
+				LS.Get_color(), PS.Get_color(), PZ.Get_color());
+		LCD5110_write_string(temp);
+//		LCD5110_set_XY(0,3);
+//		LCD5110_write_Dec(TIM_GetCounter(TIM2));
+//		LCD5110_set_XY(5,3);
+//		LCD5110_write_Dec(TIM_GetCounter(TIM3));
+		LCD5110_set_XY(0, 3);
+		LCD5110_write_Dec(RPM_L);
+		LCD5110_set_XY(5, 3);
+		LCD5110_write_Dec(RPM_P);
+//		trace_printf("Counter: %d\n",TIM_GetCounter(TIM3));
+		timer.sleep(100);
 //		trace_printf("LZ: %d   LS: %d   PS: %d   PZ: %d   \n", LZ.Get_color(),
 //				LS.Get_color(), PS.Get_color(), PZ.Get_color());
 //		trace_printf("LZ: %d   LS: %d   PS: %d   PZ: %d   \n", ADCConvertedValues[0],
@@ -512,88 +472,74 @@ int main(void) {
 //    	    TIM_SetCompare2(TIM4, 0);
 //    	}
 
-//		timer.sleep(100);
-//
-//    if(TIM_GetFlagStatus(TIM1,TIM_FLAG_CC1)==SET)
-//
-//    {
-//
-//    TIM_ClearFlag(TIM1,TIM_FLAG_CC1);
-//
-//    if(CaptureNumber == 0)
-//
-//    {
-//
-//    counter = TIM_GetCapture1(TIM1);  //The first capture
-//
-//    CaptureNumber = 1;
-//
-//    }
-//
-//    else if(CaptureNumber == 1)  //Treatment of second capture
-//
-//    {
-//
-//    if(TIM_GetFlagStatus(TIM1,TIM_FLAG_Update) != SET)//Treatment of two capture no overflow occurs
-//
-//    {
-//
-//    Time = TIM_GetCapture1(TIM1);
-//
-//    Time = Time - counter;
-//
-//    }
-//
-//    else
-//
-//    {
-//
-//    TIM_ClearFlag(TIM1,TIM_FLAG_Update);   //The update event
-//
-//    Time = 0xFFFF - counter + TIM_GetCapture1(TIM1)+1;  //If the calculation mode update events
-//
-//    }
-//
-//    CaptureNumber = 0;
-//
-//    if(Time!=0)
-//
-//    {
-//
-//    freq= 2000000/Time;  //Calculation of frequency
-//    if(i<10){
-//    	k[i] = freq;
-//    	i++;
-//    } else
-//    	k[1] = 10;
-////    printf("Counter: %d, Time: %d, freq:%d\n", counter,Time,freq);
-//
-//    }
-////    printf("Counter: %d, Time: %d, freq:%d\n", counter,Time,freq);
-////    freq = freq;  //To avoid the freq variable is compiler optimization.
-//
-//    }
-//
-//    }
+//		timer.sleep(500);
 
 	}
 
-
-
 }
 
+void TIM5_IRQHandler(void) {
+	if (TIM_GetITStatus(TIM5, TIM_IT_Update) != RESET) {
+		TIM_ClearITPendingBit(TIM5, TIM_IT_Update);
+
+		RPM_L = TIM_GetCounter(TIM2) /2;
+		RPM_P = TIM_GetCounter(TIM3) /2;
+
+		TIM_SetCounter(TIM2, 0);
+		TIM_SetCounter(TIM3, 0);
+	}
+}
+volatile u8 f = 0;
 void EXTI0_IRQHandler(void) {
 	if (EXTI_GetITStatus(EXTI_Line0) != RESET) {
-
 //	  puts("hi");
 		delay_ms(500);
-		Eng_left.Set_speed(70);
-		Eng_right.Set_speed(70);
-		delay_ms(10);
-		Eng_left.Set_speed(5);
-		Eng_right.Set_speed(5);
-		Flag = true;
+//		Eng_left.Set_speed(70);
+//		Eng_right.Set_speed(70);
+//		delay_ms(10);
+//		Eng_left.Set_speed(5);
+//		Eng_right.Set_speed(5);
+//		Flag = true;
 
+		switch (f) {
+		case 0:
+			Eng_left.Set_speed(-50);
+			Eng_right.Set_speed(-50);
+			f++;
+			break;
+		case 1:
+			Eng_left.Set_speed(-20);
+			Eng_right.Set_speed(0xFF);
+			f++;
+			break;
+		case 2:
+			Eng_left.Set_speed(0xFF);
+			Eng_right.Set_speed(5);
+			f++;
+			break;
+		case 3:
+			Eng_left.Set_speed(5);
+			Eng_right.Set_speed(5);
+			f++;
+			break;
+		case 4:
+			Eng_left.Set_speed(50);
+			Eng_right.Set_speed(50);
+			f++;
+			break;
+		case 5:
+			Eng_left.Set_speed(100);
+			Eng_right.Set_speed(100);
+			f++;
+			break;
+		case 6:
+			Eng_left.Set_speed(0xFF);
+			Eng_right.Set_speed(0xFF);
+			f = 0;
+			break;
+		default:
+			break;
+		}
 		/* Clear the EXTI line 0 pending bit */
 		EXTI_ClearITPendingBit(EXTI_Line0);
 	}

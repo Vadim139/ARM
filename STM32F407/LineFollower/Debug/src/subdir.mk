@@ -18,6 +18,7 @@ C_SRCS += \
 ../src/tm_stm32f4_spi.c 
 
 CPP_SRCS += \
+../src/5110.cpp \
 ../src/Engine.cpp \
 ../src/STM32F4_Class.cpp \
 ../src/STM32F4_my.cpp \
@@ -26,6 +27,7 @@ CPP_SRCS += \
 ../src/main.cpp 
 
 OBJS += \
+./src/5110.o \
 ./src/Engine.o \
 ./src/STM32F3_my.o \
 ./src/STM32F4_Class.o \
@@ -60,6 +62,7 @@ C_DEPS += \
 ./src/tm_stm32f4_spi.d 
 
 CPP_DEPS += \
+./src/5110.d \
 ./src/Engine.d \
 ./src/STM32F4_Class.d \
 ./src/STM32F4_my.d \

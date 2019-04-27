@@ -28,7 +28,8 @@ src/main.o: ../src/main.cpp ../include/main.h ../include/pwm.h \
  ../include/attributes.h ../include/tm_stm32f4_mco_output.h \
  ../include/Timer.h ../system/include/cmsis/cmsis_device.h \
  ../system/include/cmsis/stm32f4xx.h ../include/main.h \
- ../include/Sensor.h ../include/Engine.h
+ ../include/Sensor.h ../include/Engine.h ../include/5110.h \
+ ../include/Timer.h
 
 ../include/main.h:
 
@@ -123,3 +124,7 @@ src/main.o: ../src/main.cpp ../include/main.h ../include/pwm.h \
 ../include/Sensor.h:
 
 ../include/Engine.h:
+
+../include/5110.h:
+
+../include/Timer.h:
