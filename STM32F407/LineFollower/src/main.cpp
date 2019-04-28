@@ -158,7 +158,7 @@ void TIM2_Configuration(void) {
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
 	TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
 	TIM_TIxExternalClockConfig(TIM2, TIM_TIxExternalCLK1Source_TI1,
-			TIM_ICPolarity_Falling, 0);
+			TIM_ICPolarity_Falling, 15);
 	TIM_Cmd(TIM2, ENABLE);
 }
 
@@ -184,7 +184,7 @@ void TIM3_Configuration(void) {
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
 	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
 	TIM_TIxExternalClockConfig(TIM3, TIM_TIxExternalCLK1Source_TI1,
-			TIM_ICPolarity_Falling, 0);
+			TIM_ICPolarity_Falling, 15);
 	TIM_Cmd(TIM3, ENABLE);
 }
 
@@ -194,8 +194,8 @@ void TIM5_INT_Init() {
 
 	// (Hz) = 84MHz / ((839 + 1) * (9999 + 1)) = 10 Hz
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStruct;
-	TIM_TimeBaseInitStruct.TIM_Prescaler = 839;
-	TIM_TimeBaseInitStruct.TIM_Period = 9999;
+	TIM_TimeBaseInitStruct.TIM_Prescaler = 9999;
+	TIM_TimeBaseInitStruct.TIM_Period = 8399;
 	TIM_TimeBaseInitStruct.TIM_ClockDivision = TIM_CKD_DIV1;
 	TIM_TimeBaseInitStruct.TIM_CounterMode = TIM_CounterMode_Up;
 
@@ -209,7 +209,7 @@ void TIM5_INT_Init() {
 	NVIC_InitTypeDef NVIC_InitStruct;
 	NVIC_InitStruct.NVIC_IRQChannel = TIM5_IRQn;
 	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0;
-	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 2;
+	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStruct);
 }
@@ -477,23 +477,25 @@ int main(void) {
 	}
 
 }
-
+volatile u16 sec = 0;
 void TIM5_IRQHandler(void) {
 	if (TIM_GetITStatus(TIM5, TIM_IT_Update) != RESET) {
 		TIM_ClearITPendingBit(TIM5, TIM_IT_Update);
 
-		RPM_L = TIM_GetCounter(TIM2) /2;
-		RPM_P = TIM_GetCounter(TIM3) /2;
+		RPM_L = TIM_GetCounter(TIM2)*3;
+		RPM_P = TIM_GetCounter(TIM3)*3;
 
 		TIM_SetCounter(TIM2, 0);
 		TIM_SetCounter(TIM3, 0);
+//		sec++;
+//		trace_printf("Sec: %d",sec);
 	}
 }
 volatile u8 f = 0;
 void EXTI0_IRQHandler(void) {
 	if (EXTI_GetITStatus(EXTI_Line0) != RESET) {
 //	  puts("hi");
-		delay_ms(500);
+		delay_ms(1000);
 //		Eng_left.Set_speed(70);
 //		Eng_right.Set_speed(70);
 //		delay_ms(10);
@@ -514,7 +516,7 @@ void EXTI0_IRQHandler(void) {
 			break;
 		case 2:
 			Eng_left.Set_speed(0xFF);
-			Eng_right.Set_speed(5);
+			Eng_right.Set_speed(-20);
 			f++;
 			break;
 		case 3:
