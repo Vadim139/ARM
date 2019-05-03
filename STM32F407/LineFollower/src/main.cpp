@@ -334,7 +334,7 @@ int main(void) {
 //	Sensor PZ(3300, 1900, 1800, 1350, ADC1, TM_ADC_Channel_13, &ADCConvertedValues[3]);
 
 	Sensor LZ(3750, 3050, 3120, 2980, ADC1, TM_ADC_Channel_10, &ADCConvertedValues[0]);
-	Sensor LS(3600, 1150, 1180, 480, ADC1, TM_ADC_Channel_11, &ADCConvertedValues[1]);
+	Sensor LS(3600, 1150, 1180, 480 , ADC1, TM_ADC_Channel_11, &ADCConvertedValues[1]);
 	Sensor PS(3880, 2400, 2450, 1980, ADC1, TM_ADC_Channel_12, &ADCConvertedValues[2]);
 	Sensor PZ(3400, 2330, 2280, 2000, ADC1, TM_ADC_Channel_13, &ADCConvertedValues[3]);
 
@@ -343,7 +343,16 @@ int main(void) {
 		if (Flag) {
 
 			if (LZ.Get_color() == BLACK) {
-//				Last_outer = LEFT_S;
+				if(Last_outer<3){
+					Last_outer = LEFT_S;
+					timer.set_TimeOut(1000);
+				}else
+				{
+					Eng_left.Set_speed(20);
+					Eng_right.Set_speed(20);
+//					Last_outer = NONE;
+				}
+
 //				if(last != 4){
 //					last = 3;
 //					Engine::Turn(LEFT, NORMAL_ONE, &Eng_left, &Eng_right);
@@ -354,7 +363,16 @@ int main(void) {
 ////				Flag = false;
 			}
 			if (PZ.Get_color() == BLACK) {
-//				Last_outer = RIGHT_S;
+				if(Last_outer<3){
+					Last_outer = RIGHT_S;
+					timer.set_TimeOut(1000);
+				}else
+				{
+					Eng_left.Set_speed(20);
+					Eng_right.Set_speed(20);
+//					Last_outer = NONE;
+				}
+
 //				if(last != 3){
 //					last = 4;
 //					Engine::Turn(RIGHT, NORMAL_ONE, &Eng_left, &Eng_right);
@@ -368,18 +386,22 @@ int main(void) {
 //				Eng_left.Set_speed(100);
 //				Eng_right.Set_speed(100);
 //				timer.sleep(30);
-				Eng_left.Set_speed(5);
-				Eng_right.Set_speed(5);
+				Eng_left.Set_speed(50);
+				Eng_right.Set_speed(50);
 			} else if (LS.Get_color() == BLACK && PS.Get_color() != BLACK) {
-//				if(Last_inner < 3){
-				Last_inner = LEFT_S;
-				Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
-//				}
+				if(Last_inner < 3){
+					Last_inner = LEFT_S;
+					Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
+					if(Last_outer>=3)
+						Last_outer = NONE;
+				}
 			} else if (LS.Get_color() != BLACK && PS.Get_color() == BLACK) {
-//				if(Last_inner < 3){
-				Last_inner = RIGHT_S;
-				Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
-//				}
+				if(Last_inner < 3){
+					Last_inner = RIGHT_S;
+					Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
+					if(Last_outer>=3)
+						Last_outer = NONE;
+				}
 			} else if (LS.Get_color() != BLACK && PS.Get_color() != BLACK) {
 				if (Last_outer == 0) {
 					if (Last_inner == LEFT_S)
@@ -387,14 +409,20 @@ int main(void) {
 					if (Last_inner == RIGHT_S)
 						Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
 				} else if (Last_outer < 3) {
-					if (Last_outer == LEFT_S) {
-						Engine::Turn(LEFT, NORMAL_ONE, &Eng_left, &Eng_right);
-//						Last_outer = 3;
-					}
-					if (Last_outer == RIGHT_S) {
-						Engine::Turn(RIGHT, NORMAL_ONE, &Eng_left, &Eng_right);
-//						Last_outer = 4;
-					}
+//					if(!timer.TO_flag){
+						if (Last_outer == LEFT_S) {
+							Engine::Turn(LEFT, NORMAL_ONE, &Eng_left, &Eng_right);
+							Last_outer = 3;
+						}
+						if (Last_outer == RIGHT_S) {
+							Engine::Turn(RIGHT, NORMAL_ONE, &Eng_left, &Eng_right);
+							Last_outer = 4;
+						}
+						Last_inner = 0;
+//					}else{
+//						timer.TO_flag = false;
+//						Last_outer = NONE;
+//					}
 				} else {
 //					Eng_left.Set_speed(100);
 //					Eng_right.Set_speed(100);
@@ -411,23 +439,24 @@ int main(void) {
 				}
 			}
 		}
-		LCD5110_set_XY(0, 0);
-		sprintf(temp, "LZ: %d   LS: %d PS: %d   PZ: %d", LZ.Get_color(),
-				LS.Get_color(), PS.Get_color(), PZ.Get_color());
-		LCD5110_write_string(temp);
-//		LCD5110_set_XY(0,3);
-//		LCD5110_write_Dec(TIM_GetCounter(TIM2));
-//		LCD5110_set_XY(5,3);
-//		LCD5110_write_Dec(TIM_GetCounter(TIM3));
-		LCD5110_set_XY(0, 3);
-		LCD5110_write_Dec(RPM_L);
-		LCD5110_set_XY(5, 3);
-		LCD5110_write_Dec(RPM_P);
+//		LCD5110_set_XY(0, 0);
+//		sprintf(temp, "LZ: %d   LS: %d PS: %d   PZ: %d", LZ.Get_color(),
+//				LS.Get_color(), PS.Get_color(), PZ.Get_color());
+//		LCD5110_write_string(temp);
+////		LCD5110_set_XY(0,3);
+////		LCD5110_write_Dec(TIM_GetCounter(TIM2));
+////		LCD5110_set_XY(5,3);
+////		LCD5110_write_Dec(TIM_GetCounter(TIM3));
+//		LCD5110_set_XY(0, 3);
+//		LCD5110_write_Dec(RPM_L);
+//		LCD5110_set_XY(5, 3);
+//		LCD5110_write_Dec(RPM_P);
+
 //		trace_printf("LZ: %d   LS: %d   PS: %d   PZ: %d   \n", ADCConvertedValues[0],
 //						ADCConvertedValues[1], ADCConvertedValues[2], ADCConvertedValues[3]);
 
 //		trace_printf("Counter: %d\n",TIM_GetCounter(TIM3));
-		timer.sleep(100);
+//		timer.sleep(100);
 //		trace_printf("LZ: %d   LS: %d   PS: %d   PZ: %d   \n", LZ.Get_color(),
 //				LS.Get_color(), PS.Get_color(), PZ.Get_color());
 //		trace_printf("LZ: %d   LS: %d   PS: %d   PZ: %d   \n", ADCConvertedValues[0],
@@ -500,6 +529,57 @@ void EXTI0_IRQHandler(void) {
 	if (EXTI_GetITStatus(EXTI_Line0) != RESET) {
 //	  puts("hi");
 		delay_ms(1000);
+		if((((GPIOA)->IDR & (GPIO_Pin_0)) == 0 ? 0 : 1))
+		{
+			LCD5110_set_XY(0, 5);
+			LCD5110_write_string("START");
+			delay_ms(1000);
+			Eng_left.Set_speed(5);
+			Eng_right.Set_speed(5);
+			Flag = true;
+
+		}else
+		{
+			switch (f) {
+			case 0:
+				Eng_left.Set_speed(-50);
+				Eng_right.Set_speed(-50);
+				f++;
+				break;
+			case 1:
+				Eng_left.Set_speed(-20);
+				Eng_right.Set_speed(0xFF);
+				f++;
+				break;
+			case 2:
+				Eng_left.Set_speed(0xFF);
+				Eng_right.Set_speed(-20);
+				f++;
+				break;
+			case 3:
+				Eng_left.Set_speed(5);
+				Eng_right.Set_speed(5);
+				f++;
+				break;
+			case 4:
+				Eng_left.Set_speed(50);
+				Eng_right.Set_speed(50);
+				f++;
+				break;
+			case 5:
+				Eng_left.Set_speed(100);
+				Eng_right.Set_speed(100);
+				f++;
+				break;
+			case 6:
+				Eng_left.Set_speed(0xFF);
+				Eng_right.Set_speed(0xFF);
+				f = 0;
+				break;
+			default:
+				break;
+			}
+		}
 //		Eng_left.Set_speed(70);
 //		Eng_right.Set_speed(70);
 //		delay_ms(10);
@@ -507,45 +587,7 @@ void EXTI0_IRQHandler(void) {
 //		Eng_right.Set_speed(5);
 //		Flag = true;
 
-		switch (f) {
-		case 0:
-			Eng_left.Set_speed(-50);
-			Eng_right.Set_speed(-50);
-			f++;
-			break;
-		case 1:
-			Eng_left.Set_speed(-20);
-			Eng_right.Set_speed(0xFF);
-			f++;
-			break;
-		case 2:
-			Eng_left.Set_speed(0xFF);
-			Eng_right.Set_speed(-20);
-			f++;
-			break;
-		case 3:
-			Eng_left.Set_speed(5);
-			Eng_right.Set_speed(5);
-			f++;
-			break;
-		case 4:
-			Eng_left.Set_speed(50);
-			Eng_right.Set_speed(50);
-			f++;
-			break;
-		case 5:
-			Eng_left.Set_speed(100);
-			Eng_right.Set_speed(100);
-			f++;
-			break;
-		case 6:
-			Eng_left.Set_speed(0xFF);
-			Eng_right.Set_speed(0xFF);
-			f = 0;
-			break;
-		default:
-			break;
-		}
+
 		/* Clear the EXTI line 0 pending bit */
 		EXTI_ClearITPendingBit(EXTI_Line0);
 	}
