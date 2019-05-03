@@ -328,14 +328,15 @@ int main(void) {
 //	Sensor PS(4000, 3100, 2900, 2550, ADC1, TM_ADC_Channel_12, &ADCConvertedValues[2]);
 //	Sensor PZ(3500, 1900, 1800, 1350, ADC1, TM_ADC_Channel_13, &ADCConvertedValues[3]);
 
-	Sensor LZ(3700, 3400, 3200, 3150, ADC1, TM_ADC_Channel_10,
-			&ADCConvertedValues[0]);
-	Sensor LS(3700, 1850, 1750, 1150, ADC1, TM_ADC_Channel_11,
-			&ADCConvertedValues[1]);
-	Sensor PS(4000, 3100, 2900, 2550, ADC1, TM_ADC_Channel_12,
-			&ADCConvertedValues[2]);
-	Sensor PZ(3300, 1900, 1800, 1350, ADC1, TM_ADC_Channel_13,
-			&ADCConvertedValues[3]);
+//	Sensor LZ(3700, 3400, 3200, 3150, ADC1, TM_ADC_Channel_10, &ADCConvertedValues[0]);
+//	Sensor LS(3700, 1850, 1750, 1150, ADC1, TM_ADC_Channel_11, &ADCConvertedValues[1]);
+//	Sensor PS(4000, 3100, 2900, 2550, ADC1, TM_ADC_Channel_12, &ADCConvertedValues[2]);
+//	Sensor PZ(3300, 1900, 1800, 1350, ADC1, TM_ADC_Channel_13, &ADCConvertedValues[3]);
+
+	Sensor LZ(3750, 3050, 3120, 2980, ADC1, TM_ADC_Channel_10, &ADCConvertedValues[0]);
+	Sensor LS(3600, 1150, 1180, 480, ADC1, TM_ADC_Channel_11, &ADCConvertedValues[1]);
+	Sensor PS(3880, 2400, 2450, 1980, ADC1, TM_ADC_Channel_12, &ADCConvertedValues[2]);
+	Sensor PZ(3400, 2330, 2280, 2000, ADC1, TM_ADC_Channel_13, &ADCConvertedValues[3]);
 
 	uint8_t Last_inner = 0, Last_outer = 0;
 	while (1) {
@@ -422,6 +423,9 @@ int main(void) {
 		LCD5110_write_Dec(RPM_L);
 		LCD5110_set_XY(5, 3);
 		LCD5110_write_Dec(RPM_P);
+//		trace_printf("LZ: %d   LS: %d   PS: %d   PZ: %d   \n", ADCConvertedValues[0],
+//						ADCConvertedValues[1], ADCConvertedValues[2], ADCConvertedValues[3]);
+
 //		trace_printf("Counter: %d\n",TIM_GetCounter(TIM3));
 		timer.sleep(100);
 //		trace_printf("LZ: %d   LS: %d   PS: %d   PZ: %d   \n", LZ.Get_color(),
