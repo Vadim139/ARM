@@ -43,8 +43,8 @@ void ADC_DMA_config() {
 
 	GPIO_InitTypeDef GPIO_InitStructure;
 	/* ADC Channel 11 -> PC1*/
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2
-			| GPIO_Pin_3;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_4
+			| GPIO_Pin_5;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
@@ -67,10 +67,10 @@ void ADC_DMA_config() {
 	ADC_InitStructure.ADC_NbrOfConversion = 4;
 	ADC_Init(ADC1, &ADC_InitStructure);
 	/* ADC1 regular channel configuration */
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_10, 1, ADC_SampleTime_15Cycles);
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_11, 2, ADC_SampleTime_15Cycles);
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_12, 3, ADC_SampleTime_15Cycles);
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_13, 4, ADC_SampleTime_15Cycles); // PC1
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_11, 1, ADC_SampleTime_15Cycles);
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_12, 2, ADC_SampleTime_15Cycles);
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_14, 3, ADC_SampleTime_15Cycles);
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_15, 4, ADC_SampleTime_15Cycles); // PC1
 	/* Enable DMA request after last transfer (Single-ADC mode) */
 	ADC_DMARequestAfterLastTransferCmd(ADC1, ENABLE);
 	/* Enable ADC1 DMA */
@@ -195,7 +195,7 @@ void TIM5_INT_Init() {
 	// (Hz) = 84MHz / ((839 + 1) * (9999 + 1)) = 10 Hz
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStruct;
 	TIM_TimeBaseInitStruct.TIM_Prescaler = 9999;
-	TIM_TimeBaseInitStruct.TIM_Period = 8399;
+	TIM_TimeBaseInitStruct.TIM_Period = 839;
 	TIM_TimeBaseInitStruct.TIM_ClockDivision = TIM_CKD_DIV1;
 	TIM_TimeBaseInitStruct.TIM_CounterMode = TIM_CounterMode_Up;
 
@@ -333,23 +333,36 @@ int main(void) {
 //	Sensor PS(4000, 3100, 2900, 2550, ADC1, TM_ADC_Channel_12, &ADCConvertedValues[2]);
 //	Sensor PZ(3300, 1900, 1800, 1350, ADC1, TM_ADC_Channel_13, &ADCConvertedValues[3]);
 
-	Sensor LZ(3750, 3050, 3120, 2980, ADC1, TM_ADC_Channel_10, &ADCConvertedValues[0]);
-	Sensor LS(3600, 1150, 1180, 480 , ADC1, TM_ADC_Channel_11, &ADCConvertedValues[1]);
-	Sensor PS(3880, 2400, 2450, 1980, ADC1, TM_ADC_Channel_12, &ADCConvertedValues[2]);
-	Sensor PZ(3400, 2330, 2280, 2000, ADC1, TM_ADC_Channel_13, &ADCConvertedValues[3]);
+//	Sensor LZ(3750, 3050, 3120, 2980, ADC1, TM_ADC_Channel_10, &ADCConvertedValues[0]);
+//	Sensor LS(3600, 1150, 1180, 480 , ADC1, TM_ADC_Channel_11, &ADCConvertedValues[1]);
+//	Sensor PS(3880, 2400, 2450, 1980, ADC1, TM_ADC_Channel_12, &ADCConvertedValues[2]);
+//	Sensor PZ(3400, 2330, 2280, 2000, ADC1, TM_ADC_Channel_13, &ADCConvertedValues[3]);
+
+//	Sensor LZ(3870, 2890, 2880, 2600, ADC1, TM_ADC_Channel_10, &ADCConvertedValues[0]);
+//	Sensor LS(3750, 2300, 2360, 2100 , ADC1, TM_ADC_Channel_11, &ADCConvertedValues[1]);
+//	Sensor PS(3950, 3100, 3150, 3000, ADC1, TM_ADC_Channel_12, &ADCConvertedValues[2]);
+//	Sensor PZ(3870, 3120, 3170, 3000, ADC1, TM_ADC_Channel_13, &ADCConvertedValues[3]);
+
+	Sensor LZ(3750, 2350, 2330, 1940, ADC1, TM_ADC_Channel_10, &ADCConvertedValues[0]);
+	Sensor LS(3520, 1340, 1220, 780 , ADC1, TM_ADC_Channel_11, &ADCConvertedValues[1]);
+	Sensor PS(3850, 2530, 2450, 2200, ADC1, TM_ADC_Channel_12, &ADCConvertedValues[2]);
+	Sensor PZ(3750, 2760, 2670, 2350, ADC1, TM_ADC_Channel_13, &ADCConvertedValues[3]);
 
 	uint8_t Last_inner = 0, Last_outer = 0;
 	while (1) {
 		if (Flag) {
 
 			if (LZ.Get_color() == BLACK) {
-				if(Last_outer<3){
-					Last_outer = LEFT_S;
-					timer.set_TimeOut(1000);
-				}else
+				if(Last_outer<1){
+//					Last_outer = LEFT_S;
+					Engine::Turn(LEFT, NORMAL_ONE, &Eng_left, &Eng_right);
+					timer.sleep(500);
+//					timer.set_TimeOut(1000);
+				}else if (Last_outer>2)
 				{
-					Eng_left.Set_speed(20);
-					Eng_right.Set_speed(20);
+					Last_outer = 5;
+//					Eng_left.Set_speed(20);
+//					Eng_right.Set_speed(20);
 //					Last_outer = NONE;
 				}
 
@@ -362,14 +375,17 @@ int main(void) {
 ////				Eng_right.Stop();
 ////				Flag = false;
 			}
-			if (PZ.Get_color() == BLACK) {
-				if(Last_outer<3){
-					Last_outer = RIGHT_S;
-					timer.set_TimeOut(1000);
-				}else
+			else if (PZ.Get_color() == BLACK) {
+				if(Last_outer<1){
+//					Last_outer = RIGHT_S;
+					Engine::Turn(RIGHT, NORMAL_ONE, &Eng_left, &Eng_right);
+					timer.sleep(500);
+//					timer.set_TimeOut(1000);
+				}else if (Last_outer>2)
 				{
-					Eng_left.Set_speed(20);
-					Eng_right.Set_speed(20);
+					Last_outer = 5;
+//					Eng_left.Set_speed(20);
+//					Eng_right.Set_speed(20);
 //					Last_outer = NONE;
 				}
 
@@ -382,21 +398,29 @@ int main(void) {
 ////				Eng_right.Stop();
 ////				Flag = false;
 			}
-			if (LS.Get_color() == BLACK && PS.Get_color() == BLACK) {
+			else if (LS.Get_color() == BLACK && PS.Get_color() == BLACK) {
+//				if(Last_inner < 3 && (Last_outer < 1 || Last_outer > 4 )){
+//					Eng_left.Set_speed(50);
+//					Eng_right.Set_speed(50);
+//					timer.sleep(20);
+//					Eng_left.Set_speed(10);
+//					Eng_right.Set_speed(10);
+//					if(Last_outer>=3)
+//						Last_outer = NONE;
+//				}
 //				Eng_left.Set_speed(100);
 //				Eng_right.Set_speed(100);
 //				timer.sleep(30);
-				Eng_left.Set_speed(50);
-				Eng_right.Set_speed(50);
+
 			} else if (LS.Get_color() == BLACK && PS.Get_color() != BLACK) {
-				if(Last_inner < 3){
+				if(Last_inner < 3 && (Last_outer < 1 || Last_outer > 4 )){
 					Last_inner = LEFT_S;
 					Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
 					if(Last_outer>=3)
 						Last_outer = NONE;
 				}
 			} else if (LS.Get_color() != BLACK && PS.Get_color() == BLACK) {
-				if(Last_inner < 3){
+				if(Last_inner < 3 && (Last_outer < 1 || Last_outer > 4 )){
 					Last_inner = RIGHT_S;
 					Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
 					if(Last_outer>=3)
@@ -404,25 +428,25 @@ int main(void) {
 				}
 			} else if (LS.Get_color() != BLACK && PS.Get_color() != BLACK) {
 				if (Last_outer == 0) {
-					if (Last_inner == LEFT_S)
-						Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
-					if (Last_inner == RIGHT_S)
-						Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
+//					if (Last_inner == LEFT_S)
+//						Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
+//					if (Last_inner == RIGHT_S)
+//						Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
 				} else if (Last_outer < 3) {
-//					if(!timer.TO_flag){
-						if (Last_outer == LEFT_S) {
-							Engine::Turn(LEFT, NORMAL_ONE, &Eng_left, &Eng_right);
-							Last_outer = 3;
-						}
-						if (Last_outer == RIGHT_S) {
-							Engine::Turn(RIGHT, NORMAL_ONE, &Eng_left, &Eng_right);
-							Last_outer = 4;
-						}
-						Last_inner = 0;
-//					}else{
-//						timer.TO_flag = false;
-//						Last_outer = NONE;
-//					}
+/////					if(!timer.TO_flag){
+//						if (Last_outer == LEFT_S) {
+//							Engine::Turn(LEFT, NORMAL_ONE, &Eng_left, &Eng_right);
+//							Last_outer = 3;
+//						}
+//						if (Last_outer == RIGHT_S) {
+//							Engine::Turn(RIGHT, NORMAL_ONE, &Eng_left, &Eng_right);
+//							Last_outer = 4;
+//						}
+//						Last_inner = 0;
+////					}else{
+////						timer.TO_flag = false;
+////						Last_outer = NONE;
+////					}
 				} else {
 //					Eng_left.Set_speed(100);
 //					Eng_right.Set_speed(100);
@@ -439,18 +463,18 @@ int main(void) {
 				}
 			}
 		}
-//		LCD5110_set_XY(0, 0);
-//		sprintf(temp, "LZ: %d   LS: %d PS: %d   PZ: %d", LZ.Get_color(),
-//				LS.Get_color(), PS.Get_color(), PZ.Get_color());
-//		LCD5110_write_string(temp);
-////		LCD5110_set_XY(0,3);
-////		LCD5110_write_Dec(TIM_GetCounter(TIM2));
-////		LCD5110_set_XY(5,3);
-////		LCD5110_write_Dec(TIM_GetCounter(TIM3));
-//		LCD5110_set_XY(0, 3);
-//		LCD5110_write_Dec(RPM_L);
-//		LCD5110_set_XY(5, 3);
-//		LCD5110_write_Dec(RPM_P);
+		LCD5110_set_XY(0, 0);
+		sprintf(temp, "LZ: %d   LS: %d PS: %d   PZ: %d", LZ.Get_color(),
+				LS.Get_color(), PS.Get_color(), PZ.Get_color());
+		LCD5110_write_string(temp);
+//		LCD5110_set_XY(0,3);
+//		LCD5110_write_Dec(TIM_GetCounter(TIM2));
+//		LCD5110_set_XY(5,3);
+//		LCD5110_write_Dec(TIM_GetCounter(TIM3));
+		LCD5110_set_XY(0, 3);
+		LCD5110_write_Dec(RPM_L);
+		LCD5110_set_XY(5, 3);
+		LCD5110_write_Dec(RPM_P);
 
 //		trace_printf("LZ: %d   LS: %d   PS: %d   PZ: %d   \n", ADCConvertedValues[0],
 //						ADCConvertedValues[1], ADCConvertedValues[2], ADCConvertedValues[3]);
@@ -515,8 +539,8 @@ void TIM5_IRQHandler(void) {
 	if (TIM_GetITStatus(TIM5, TIM_IT_Update) != RESET) {
 		TIM_ClearITPendingBit(TIM5, TIM_IT_Update);
 
-		RPM_L = TIM_GetCounter(TIM2)*3;
-		RPM_P = TIM_GetCounter(TIM3)*3;
+		RPM_L = TIM_GetCounter(TIM2)*30;
+		RPM_P = TIM_GetCounter(TIM3)*30;
 
 		TIM_SetCounter(TIM2, 0);
 		TIM_SetCounter(TIM3, 0);

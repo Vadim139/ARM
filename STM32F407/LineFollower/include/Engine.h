@@ -14,7 +14,7 @@
 #include "main.h"
 
 #define TIMx TIM4
-#define MIN_PWM 600
+#define MIN_PWM 700
 
 typedef enum {
 	LEFT,
