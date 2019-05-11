@@ -195,7 +195,7 @@ void TIM5_INT_Init() {
 	// (Hz) = 84MHz / ((839 + 1) * (9999 + 1)) = 10 Hz
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStruct;
 	TIM_TimeBaseInitStruct.TIM_Prescaler = 9999;
-	TIM_TimeBaseInitStruct.TIM_Period = 839;
+	TIM_TimeBaseInitStruct.TIM_Period = 2199;
 	TIM_TimeBaseInitStruct.TIM_ClockDivision = TIM_CKD_DIV1;
 	TIM_TimeBaseInitStruct.TIM_CounterMode = TIM_CounterMode_Up;
 
@@ -308,6 +308,9 @@ int main(void) {
 	uint16_t ADC_4 = 0;
 	char ADCs4[5] = { 0, 0, 0, 0, 0 };
 
+	Eng_left.Set_RPM(0);
+	Eng_right.Set_RPM(0);
+
 //	Sensor LZ(3900,3650,3570,3555,ADC1,TM_ADC_Channel_10);
 //	Sensor LS(3630,3000,3110,2860,ADC1,TM_ADC_Channel_11);
 //	Sensor PS(3900,3500,3560,3400,ADC1,TM_ADC_Channel_12);
@@ -343,10 +346,15 @@ int main(void) {
 //	Sensor PS(3950, 3100, 3150, 3000, ADC1, TM_ADC_Channel_12, &ADCConvertedValues[2]);
 //	Sensor PZ(3870, 3120, 3170, 3000, ADC1, TM_ADC_Channel_13, &ADCConvertedValues[3]);
 
-	Sensor LZ(3750, 2350, 2330, 1940, ADC1, TM_ADC_Channel_10, &ADCConvertedValues[0]);
-	Sensor LS(3520, 1340, 1220, 780 , ADC1, TM_ADC_Channel_11, &ADCConvertedValues[1]);
-	Sensor PS(3850, 2530, 2450, 2200, ADC1, TM_ADC_Channel_12, &ADCConvertedValues[2]);
-	Sensor PZ(3750, 2760, 2670, 2350, ADC1, TM_ADC_Channel_13, &ADCConvertedValues[3]);
+//	Sensor LZ(3750, 2350, 2330, 1940, ADC1, TM_ADC_Channel_10, &ADCConvertedValues[0]);
+//	Sensor LS(3520, 1340, 1220, 780 , ADC1, TM_ADC_Channel_11, &ADCConvertedValues[1]);
+//	Sensor PS(3850, 2530, 2450, 2200, ADC1, TM_ADC_Channel_12, &ADCConvertedValues[2]);
+//	Sensor PZ(3750, 2760, 2670, 2350, ADC1, TM_ADC_Channel_13, &ADCConvertedValues[3]);
+
+	Sensor LZ(3700, 2080, 2040, 1600, ADC1, TM_ADC_Channel_10, &ADCConvertedValues[0]);
+	Sensor LS(3650, 1620, 1680, 1200, ADC1, TM_ADC_Channel_11, &ADCConvertedValues[1]);
+	Sensor PS(3880, 2550, 2640, 2300, ADC1, TM_ADC_Channel_12, &ADCConvertedValues[2]);
+	Sensor PZ(3900, 2670, 2800, 2550, ADC1, TM_ADC_Channel_13, &ADCConvertedValues[3]);
 
 	uint8_t Last_inner = 0, Last_outer = 0;
 	while (1) {
@@ -475,9 +483,11 @@ int main(void) {
 		LCD5110_write_Dec(RPM_L);
 		LCD5110_set_XY(5, 3);
 		LCD5110_write_Dec(RPM_P);
+		LCD5110_set_XY(0, 5);
+		LCD5110_write_Dec(Eng_left.RPM);
 
-//		trace_printf("LZ: %d   LS: %d   PS: %d   PZ: %d   \n", ADCConvertedValues[0],
-//						ADCConvertedValues[1], ADCConvertedValues[2], ADCConvertedValues[3]);
+		trace_printf("LZ: %d   LS: %d   PS: %d   PZ: %d   \n", ADCConvertedValues[0],
+						ADCConvertedValues[1], ADCConvertedValues[2], ADCConvertedValues[3]);
 
 //		trace_printf("Counter: %d\n",TIM_GetCounter(TIM3));
 //		timer.sleep(100);
@@ -539,8 +549,11 @@ void TIM5_IRQHandler(void) {
 	if (TIM_GetITStatus(TIM5, TIM_IT_Update) != RESET) {
 		TIM_ClearITPendingBit(TIM5, TIM_IT_Update);
 
-		RPM_L = TIM_GetCounter(TIM2)*30;
-		RPM_P = TIM_GetCounter(TIM3)*30;
+		RPM_L = TIM_GetCounter(TIM2)*12;
+		RPM_P = TIM_GetCounter(TIM3)*12;
+
+		Eng_left.PID(RPM_L);
+		Eng_right.PID(RPM_P);
 
 		TIM_SetCounter(TIM2, 0);
 		TIM_SetCounter(TIM3, 0);
@@ -552,58 +565,108 @@ volatile u8 f = 0;
 void EXTI0_IRQHandler(void) {
 	if (EXTI_GetITStatus(EXTI_Line0) != RESET) {
 //	  puts("hi");
-		delay_ms(1000);
-		if((((GPIOA)->IDR & (GPIO_Pin_0)) == 0 ? 0 : 1))
-		{
-			LCD5110_set_XY(0, 5);
-			LCD5110_write_string("START");
-			delay_ms(1000);
-			Eng_left.Set_speed(5);
-			Eng_right.Set_speed(5);
-			Flag = true;
-
-		}else
-		{
+		delay_ms(10000);
+//		if((((GPIOA)->IDR & (GPIO_Pin_0)) == 0 ? 0 : 1))
+//		{
+//			LCD5110_set_XY(0, 5);
+//			LCD5110_write_string("START");
+//			delay_ms(5000);
+//			Eng_left.Set_speed(5);
+//			Eng_right.Set_speed(5);
+//			Flag = true;
+//
+//		}else
+//
+//		{
+//					LCD5110_set_XY(0, 5);
+		//			LCD5110_write_string("START");
 			switch (f) {
 			case 0:
-				Eng_left.Set_speed(-50);
-				Eng_right.Set_speed(-50);
+				Eng_left.Set_RPM(60);
+				Eng_right.Set_RPM(60);
+//				LCD5110_write_Dec(60);
 				f++;
 				break;
 			case 1:
-				Eng_left.Set_speed(-20);
-				Eng_right.Set_speed(0xFF);
+				Eng_left.Set_RPM(120);
+				Eng_right.Set_RPM(120);
+//				LCD5110_write_Dec(120);
 				f++;
 				break;
 			case 2:
-				Eng_left.Set_speed(0xFF);
-				Eng_right.Set_speed(-20);
+				Eng_left.Set_RPM(150);
+				Eng_right.Set_RPM(150);
+//				LCD5110_write_Dec(150);
 				f++;
 				break;
 			case 3:
-				Eng_left.Set_speed(5);
-				Eng_right.Set_speed(5);
+				Eng_left.Set_RPM(240);
+				Eng_right.Set_RPM(240);
+//				LCD5110_write_Dec(240);
 				f++;
 				break;
 			case 4:
-				Eng_left.Set_speed(50);
-				Eng_right.Set_speed(50);
+				Eng_left.Set_RPM(90);
+				Eng_right.Set_RPM(90);
+//				LCD5110_write_Dec(90);
 				f++;
 				break;
 			case 5:
-				Eng_left.Set_speed(100);
-				Eng_right.Set_speed(100);
+				Eng_left.Set_RPM(270);
+				Eng_right.Set_RPM(270);
+//				LCD5110_write_Dec(270);
 				f++;
 				break;
 			case 6:
-				Eng_left.Set_speed(0xFF);
-				Eng_right.Set_speed(0xFF);
+				Eng_left.Set_RPM(0);
+				Eng_right.Set_RPM(0);
 				f = 0;
 				break;
 			default:
 				break;
 			}
-		}
+//		}
+//		{
+//			switch (f) {
+//			case 0:
+//				Eng_left.Set_speed(-50);
+//				Eng_right.Set_speed(-50);
+//				f++;
+//				break;
+//			case 1:
+//				Eng_left.Set_speed(-20);
+//				Eng_right.Set_speed(0xFF);
+//				f++;
+//				break;
+//			case 2:
+//				Eng_left.Set_speed(0xFF);
+//				Eng_right.Set_speed(-20);
+//				f++;
+//				break;
+//			case 3:
+//				Eng_left.Set_speed(5);
+//				Eng_right.Set_speed(5);
+//				f++;
+//				break;
+//			case 4:
+//				Eng_left.Set_speed(50);
+//				Eng_right.Set_speed(50);
+//				f++;
+//				break;
+//			case 5:
+//				Eng_left.Set_speed(100);
+//				Eng_right.Set_speed(100);
+//				f++;
+//				break;
+//			case 6:
+//				Eng_left.Set_speed(0xFF);
+//				Eng_right.Set_speed(0xFF);
+//				f = 0;
+//				break;
+//			default:
+//				break;
+//			}
+//		}
 //		Eng_left.Set_speed(70);
 //		Eng_right.Set_speed(70);
 //		delay_ms(10);

@@ -15,6 +15,7 @@ Engine::Engine(uint8_t channel) {
 	Channel = channel;
 
 	Speed = 0;
+	Speed2 = 0;
 
 }
 
@@ -25,6 +26,38 @@ Engine::~Engine() {
 uint8_t Engine::Get_speed(void){
 
 	return Speed;
+}
+
+
+void Engine::Set_speed2(int16_t speed){
+
+	uint16_t offset;
+
+	if(speed>1000)
+		speed = 1000;
+	if(speed<0)
+		speed = 0;
+		Speed2 = speed;
+
+
+		switch (Channel) {
+			case 1:
+				TIM_SetCompare1(TIMx, speed);
+				break;
+			case 2:
+				TIM_SetCompare2(TIMx, speed);
+				break;
+			case 3:
+				TIM_SetCompare3(TIMx, speed);
+				break;
+			case 4:
+				TIM_SetCompare4(TIMx, speed);
+				break;
+			default:
+				break;
+		}
+
+
 }
 
 void Engine::Set_speed(int16_t speed){
@@ -102,6 +135,31 @@ void Engine::Half_speed(){
 	Set_speed(50);
 }
 
+void Engine::Set_RPM(uint16_t speed){
+	if(speed>270)
+		RPM = 270;
+	else if(speed<0)
+		RPM = 0;
+
+	RPM = speed;
+}
+
+void Engine::PID(uint16_t act_speed){
+
+	if(act_speed > RPM){
+		if(abs(act_speed-RPM)>50)
+			Set_speed2(Speed2-20);
+		else
+			Set_speed2(Speed2-5);
+	}
+
+	if(act_speed < RPM){
+		if(abs(act_speed-RPM)>50)
+			Set_speed2(Speed2+20);
+		else
+			Set_speed2(Speed2+5);
+		}
+}
 
 void Engine::Init(uint8_t channels){
 

@@ -38,15 +38,20 @@ public:
 	virtual ~Engine();
 	uint8_t Get_speed(void);
 	void Set_speed(int16_t speed);
+	void Set_speed2(int16_t speed);
+	void Set_RPM(uint16_t speed);
 	void Stop();
 	void Full_speed();
 	void Half_speed();
+	void PID(uint16_t act_speed);
 
 	static void Init(uint8_t channels);
 	static void Turn(Engine_dir_t dir,Engine_turn_speed_t speed, Engine* left, Engine* right);
-
+	uint16_t RPM;
 private:
 	int16_t Speed;
+	int16_t Speed2;
+
 	uint8_t Channel;
 
 };
