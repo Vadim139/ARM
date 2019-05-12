@@ -32,11 +32,12 @@ __IO TestStatus TransferStatus = FAILED;
 #define TRUE true
 #define FALSE false
 
-#define BUFFERSIZE 4 // 200KHz x2 HT/TC at 1KHz
+#define BUFFERSIZE 5 // 200KHz x2 HT/TC at 1KHz
 __IO uint16_t ADCConvertedValues[BUFFERSIZE];
 #include "stm32f4xx.h"
 void ADC_DMA_config() {
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2, ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
@@ -48,6 +49,9 @@ void ADC_DMA_config() {
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
 	ADC_CommonInitTypeDef ADC_CommonInitStructure;
 	ADC_InitTypeDef ADC_InitStructure;
@@ -64,13 +68,14 @@ void ADC_DMA_config() {
 	ADC_ExternalTrigConvEdge_Rising;
 	ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_T2_TRGO;
 	ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
-	ADC_InitStructure.ADC_NbrOfConversion = 4;
+	ADC_InitStructure.ADC_NbrOfConversion = 5;
 	ADC_Init(ADC1, &ADC_InitStructure);
 	/* ADC1 regular channel configuration */
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_11, 1, ADC_SampleTime_15Cycles);
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_12, 2, ADC_SampleTime_15Cycles);
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_14, 3, ADC_SampleTime_15Cycles);
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_15, 4, ADC_SampleTime_15Cycles); // PC1
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_9, 1, ADC_SampleTime_15Cycles);
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_11, 2, ADC_SampleTime_15Cycles);
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_12, 3, ADC_SampleTime_15Cycles);
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_14, 4, ADC_SampleTime_15Cycles);
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_15, 5, ADC_SampleTime_15Cycles); // PC1
 	/* Enable DMA request after last transfer (Single-ADC mode) */
 	ADC_DMARequestAfterLastTransferCmd(ADC1, ENABLE);
 	/* Enable ADC1 DMA */
@@ -343,10 +348,17 @@ int main(void) {
 //	Sensor PS(3950, 3100, 3150, 3000, ADC1, TM_ADC_Channel_12, &ADCConvertedValues[2]);
 //	Sensor PZ(3870, 3120, 3170, 3000, ADC1, TM_ADC_Channel_13, &ADCConvertedValues[3]);
 
-	Sensor LZ(3750, 2350, 2330, 1940, ADC1, TM_ADC_Channel_10, &ADCConvertedValues[0]);
-	Sensor LS(3520, 1340, 1220, 780 , ADC1, TM_ADC_Channel_11, &ADCConvertedValues[1]);
-	Sensor PS(3850, 2530, 2450, 2200, ADC1, TM_ADC_Channel_12, &ADCConvertedValues[2]);
-	Sensor PZ(3750, 2760, 2670, 2350, ADC1, TM_ADC_Channel_13, &ADCConvertedValues[3]);
+//	Sensor LZ(3750, 2350, 2330, 1940, ADC1, TM_ADC_Channel_10, &ADCConvertedValues[0]);
+//	Sensor LS(3520, 1340, 1220, 780 , ADC1, TM_ADC_Channel_11, &ADCConvertedValues[1]);
+//	Sensor PS(3850, 2530, 2450, 2200, ADC1, TM_ADC_Channel_12, &ADCConvertedValues[2]);
+//	Sensor PZ(3750, 2760, 2670, 2350, ADC1, TM_ADC_Channel_13, &ADCConvertedValues[3]);
+
+    Sensor SS(3550, 2260, 2300, 2040, ADC1, TM_ADC_Channel_9, &ADCConvertedValues[0]);
+    Sensor LZ(3720, 2250, 2300, 1880, ADC1, TM_ADC_Channel_11, &ADCConvertedValues[1]);
+    Sensor LS(3610, 2240, 2260, 1910, ADC1, TM_ADC_Channel_12, &ADCConvertedValues[2]);
+    Sensor PS(3820, 2380, 2440, 2130, ADC1, TM_ADC_Channel_14, &ADCConvertedValues[3]);
+    Sensor PZ(3550, 1210, 1290, 1060, ADC1, TM_ADC_Channel_15, &ADCConvertedValues[4]);
+
 
 	uint8_t Last_inner = 0, Last_outer = 0;
 	while (1) {
@@ -355,8 +367,8 @@ int main(void) {
 			if (LZ.Get_color() == BLACK) {
 				if(Last_outer<1){
 //					Last_outer = LEFT_S;
-					Engine::Turn(LEFT, NORMAL_ONE, &Eng_left, &Eng_right);
-					timer.sleep(500);
+					Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
+//					timer.sleep(500);
 //					timer.set_TimeOut(1000);
 				}else if (Last_outer>2)
 				{
@@ -378,8 +390,8 @@ int main(void) {
 			else if (PZ.Get_color() == BLACK) {
 				if(Last_outer<1){
 //					Last_outer = RIGHT_S;
-					Engine::Turn(RIGHT, NORMAL_ONE, &Eng_left, &Eng_right);
-					timer.sleep(500);
+					Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
+//					timer.sleep(500);
 //					timer.set_TimeOut(1000);
 				}else if (Last_outer>2)
 				{
@@ -403,8 +415,8 @@ int main(void) {
 //					Eng_left.Set_speed(50);
 //					Eng_right.Set_speed(50);
 //					timer.sleep(20);
-//					Eng_left.Set_speed(10);
-//					Eng_right.Set_speed(10);
+					Eng_left.Set_speed(10);
+					Eng_right.Set_speed(10);
 //					if(Last_outer>=3)
 //						Last_outer = NONE;
 //				}
@@ -428,10 +440,10 @@ int main(void) {
 				}
 			} else if (LS.Get_color() != BLACK && PS.Get_color() != BLACK) {
 				if (Last_outer == 0) {
-//					if (Last_inner == LEFT_S)
-//						Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
-//					if (Last_inner == RIGHT_S)
-//						Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
+					if (Last_inner == LEFT_S)
+						Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
+					if (Last_inner == RIGHT_S)
+						Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
 				} else if (Last_outer < 3) {
 /////					if(!timer.TO_flag){
 //						if (Last_outer == LEFT_S) {
@@ -464,8 +476,8 @@ int main(void) {
 			}
 		}
 		LCD5110_set_XY(0, 0);
-		sprintf(temp, "LZ: %d   LS: %d PS: %d   PZ: %d", LZ.Get_color(),
-				LS.Get_color(), PS.Get_color(), PZ.Get_color());
+		sprintf(temp, "     SS:%d       LS:%d  PS:%d  LZ:%d      PZ:%d", SS.Get_color(),
+				LS.Get_color(), PS.Get_color(), LZ.Get_color(), PZ.Get_color());
 		LCD5110_write_string(temp);
 //		LCD5110_set_XY(0,3);
 //		LCD5110_write_Dec(TIM_GetCounter(TIM2));
@@ -476,8 +488,8 @@ int main(void) {
 		LCD5110_set_XY(5, 3);
 		LCD5110_write_Dec(RPM_P);
 
-//		trace_printf("LZ: %d   LS: %d   PS: %d   PZ: %d   \n", ADCConvertedValues[0],
-//						ADCConvertedValues[1], ADCConvertedValues[2], ADCConvertedValues[3]);
+//		trace_printf("LZ: %d   LS: %d   SS: %d  PS: %d   PZ: %d   \n", ADCConvertedValues[1],
+//						ADCConvertedValues[2], ADCConvertedValues[0], ADCConvertedValues[3], ADCConvertedValues[4]);
 
 //		trace_printf("Counter: %d\n",TIM_GetCounter(TIM3));
 //		timer.sleep(100);
@@ -552,12 +564,12 @@ volatile u8 f = 0;
 void EXTI0_IRQHandler(void) {
 	if (EXTI_GetITStatus(EXTI_Line0) != RESET) {
 //	  puts("hi");
-		delay_ms(1000);
+		delay_ms(5000);
 		if((((GPIOA)->IDR & (GPIO_Pin_0)) == 0 ? 0 : 1))
 		{
 			LCD5110_set_XY(0, 5);
 			LCD5110_write_string("START");
-			delay_ms(1000);
+			delay_ms(10000);
 			Eng_left.Set_speed(5);
 			Eng_right.Set_speed(5);
 			Flag = true;
