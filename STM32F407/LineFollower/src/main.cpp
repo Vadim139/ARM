@@ -365,18 +365,36 @@ int main(void) {
 		if (Flag) {
 
 			if (LZ.Get_color() == BLACK) {
-				if(Last_outer<1){
-//					Last_outer = LEFT_S;
-					Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
-//					timer.sleep(500);
-//					timer.set_TimeOut(1000);
-				}else if (Last_outer>2)
+				if(Last_outer == 0){//Last_outer!=RIGHT_S   || Last_outer == RIGHT_S
+//					if(timer.TO_flag){
+						Last_outer = LEFT_S;
+						Last_inner = LEFT_S;
+						Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
+						timer.sleep(200);
+//						timer.set_TimeOut(100);
+//					}
+				}else if (Last_outer == LEFT_S)
 				{
-					Last_outer = 5;
+//					Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
+					Last_outer = 3;
+//					Last_outer = 5;
 //					Eng_left.Set_speed(20);
 //					Eng_right.Set_speed(20);
 //					Last_outer = NONE;
 				}
+				else if (Last_outer == RIGHT_S)
+				{
+//					if(timer.TO_flag)
+//					{
+						Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
+//					}
+				}
+//				else
+//				{
+//					Eng_left.Set_speed(5);
+//					Eng_right.Set_speed(5);
+//				}
+
 
 //				if(last != 4){
 //					last = 3;
@@ -388,18 +406,35 @@ int main(void) {
 ////				Flag = false;
 			}
 			else if (PZ.Get_color() == BLACK) {
-				if(Last_outer<1){
-//					Last_outer = RIGHT_S;
-					Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
-//					timer.sleep(500);
-//					timer.set_TimeOut(1000);
-				}else if (Last_outer>2)
+				if(Last_outer == 0){
+//					if(timer.TO_flag){
+						Last_outer = RIGHT_S;
+						Last_inner = RIGHT_S;
+						Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
+						timer.sleep(200);
+//						timer.set_TimeOut(100);
+//					}
+				}else if (Last_outer == RIGHT_S)
 				{
-					Last_outer = 5;
+//					Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
+					Last_outer = 4;
+//					Last_outer = 5;
 //					Eng_left.Set_speed(20);
 //					Eng_right.Set_speed(20);
 //					Last_outer = NONE;
 				}
+				else if (Last_outer == LEFT_S)
+				{
+//					if(timer.TO_flag)
+//					{
+						Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
+//					}
+				}
+//				else
+//				{
+//					Eng_left.Set_speed(5);
+//					Eng_right.Set_speed(5);
+//				}
 
 //				if(last != 3){
 //					last = 4;
@@ -410,41 +445,44 @@ int main(void) {
 ////				Eng_right.Stop();
 ////				Flag = false;
 			}
-			else if (LS.Get_color() == BLACK && PS.Get_color() == BLACK) {
-//				if(Last_inner < 3 && (Last_outer < 1 || Last_outer > 4 )){
+			else if (SS.Get_color() == BLACK) {
+				if(Last_inner < 3 && (Last_outer < 1 || Last_outer > 2 )){
 //					Eng_left.Set_speed(50);
 //					Eng_right.Set_speed(50);
 //					timer.sleep(20);
+//				Eng_left.Set_speed(70);
+//				Eng_right.Set_speed(70);
+//				timer.sleep(50);
 					Eng_left.Set_speed(10);
 					Eng_right.Set_speed(10);
 //					if(Last_outer>=3)
 //						Last_outer = NONE;
-//				}
+				}
 //				Eng_left.Set_speed(100);
 //				Eng_right.Set_speed(100);
 //				timer.sleep(30);
 
 			} else if (LS.Get_color() == BLACK && PS.Get_color() != BLACK) {
-				if(Last_inner < 3 && (Last_outer < 1 || Last_outer > 4 )){
+				if(Last_inner < 3 && (Last_outer < 1 || Last_outer > 2 )){
 					Last_inner = LEFT_S;
 					Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
-					if(Last_outer>=3)
+					if(Last_outer>2)
 						Last_outer = NONE;
 				}
 			} else if (LS.Get_color() != BLACK && PS.Get_color() == BLACK) {
-				if(Last_inner < 3 && (Last_outer < 1 || Last_outer > 4 )){
+				if(Last_inner < 3 && (Last_outer < 1 || Last_outer > 2 )){
 					Last_inner = RIGHT_S;
 					Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
-					if(Last_outer>=3)
+					if(Last_outer>2)
 						Last_outer = NONE;
 				}
-			} else if (LS.Get_color() != BLACK && PS.Get_color() != BLACK) {
+			} else if (LS.Get_color() != BLACK && PS.Get_color() != BLACK && SS.Get_color() != BLACK) {
 				if (Last_outer == 0) {
 					if (Last_inner == LEFT_S)
 						Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
 					if (Last_inner == RIGHT_S)
 						Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
-				} else if (Last_outer < 3) {
+//				} else if (Last_outer < 3) {
 /////					if(!timer.TO_flag){
 //						if (Last_outer == LEFT_S) {
 //							Engine::Turn(LEFT, NORMAL_ONE, &Eng_left, &Eng_right);
@@ -459,7 +497,7 @@ int main(void) {
 ////						timer.TO_flag = false;
 ////						Last_outer = NONE;
 ////					}
-				} else {
+//				} else {
 //					Eng_left.Set_speed(100);
 //					Eng_right.Set_speed(100);
 //					timer.sleep(30);
@@ -475,18 +513,18 @@ int main(void) {
 				}
 			}
 		}
-		LCD5110_set_XY(0, 0);
-		sprintf(temp, "     SS:%d       LS:%d  PS:%d  LZ:%d      PZ:%d", SS.Get_color(),
-				LS.Get_color(), PS.Get_color(), LZ.Get_color(), PZ.Get_color());
-		LCD5110_write_string(temp);
-//		LCD5110_set_XY(0,3);
-//		LCD5110_write_Dec(TIM_GetCounter(TIM2));
-//		LCD5110_set_XY(5,3);
-//		LCD5110_write_Dec(TIM_GetCounter(TIM3));
-		LCD5110_set_XY(0, 3);
-		LCD5110_write_Dec(RPM_L);
-		LCD5110_set_XY(5, 3);
-		LCD5110_write_Dec(RPM_P);
+//		LCD5110_set_XY(0, 0);
+//		sprintf(temp, "     SS:%d       LS:%d  PS:%d  LZ:%d      PZ:%d", SS.Get_color(),
+//				LS.Get_color(), PS.Get_color(), LZ.Get_color(), PZ.Get_color());
+//		LCD5110_write_string(temp);
+////		LCD5110_set_XY(0,3);
+////		LCD5110_write_Dec(TIM_GetCounter(TIM2));
+////		LCD5110_set_XY(5,3);
+////		LCD5110_write_Dec(TIM_GetCounter(TIM3));
+//		LCD5110_set_XY(0, 3);
+//		LCD5110_write_Dec(RPM_L);
+//		LCD5110_set_XY(5, 3);
+//		LCD5110_write_Dec(RPM_P);
 
 //		trace_printf("LZ: %d   LS: %d   SS: %d  PS: %d   PZ: %d   \n", ADCConvertedValues[1],
 //						ADCConvertedValues[2], ADCConvertedValues[0], ADCConvertedValues[3], ADCConvertedValues[4]);
@@ -564,58 +602,58 @@ volatile u8 f = 0;
 void EXTI0_IRQHandler(void) {
 	if (EXTI_GetITStatus(EXTI_Line0) != RESET) {
 //	  puts("hi");
-		delay_ms(5000);
-		if((((GPIOA)->IDR & (GPIO_Pin_0)) == 0 ? 0 : 1))
-		{
+		delay_ms(1000);
+//		if((((GPIOA)->IDR & (GPIO_Pin_0)) == 0 ? 0 : 1))
+//		{
 			LCD5110_set_XY(0, 5);
 			LCD5110_write_string("START");
-			delay_ms(10000);
+			delay_ms(5000);
 			Eng_left.Set_speed(5);
 			Eng_right.Set_speed(5);
 			Flag = true;
 
-		}else
-		{
-			switch (f) {
-			case 0:
-				Eng_left.Set_speed(-50);
-				Eng_right.Set_speed(-50);
-				f++;
-				break;
-			case 1:
-				Eng_left.Set_speed(-20);
-				Eng_right.Set_speed(0xFF);
-				f++;
-				break;
-			case 2:
-				Eng_left.Set_speed(0xFF);
-				Eng_right.Set_speed(-20);
-				f++;
-				break;
-			case 3:
-				Eng_left.Set_speed(5);
-				Eng_right.Set_speed(5);
-				f++;
-				break;
-			case 4:
-				Eng_left.Set_speed(50);
-				Eng_right.Set_speed(50);
-				f++;
-				break;
-			case 5:
-				Eng_left.Set_speed(100);
-				Eng_right.Set_speed(100);
-				f++;
-				break;
-			case 6:
-				Eng_left.Set_speed(0xFF);
-				Eng_right.Set_speed(0xFF);
-				f = 0;
-				break;
-			default:
-				break;
-			}
-		}
+//		}else
+//		{
+//			switch (f) {
+//			case 0:
+//				Eng_left.Set_speed(-50);
+//				Eng_right.Set_speed(-50);
+//				f++;
+//				break;
+//			case 1:
+//				Eng_left.Set_speed(-20);
+//				Eng_right.Set_speed(0xFF);
+//				f++;
+//				break;
+//			case 2:
+//				Eng_left.Set_speed(0xFF);
+//				Eng_right.Set_speed(-20);
+//				f++;
+//				break;
+//			case 3:
+//				Eng_left.Set_speed(5);
+//				Eng_right.Set_speed(5);
+//				f++;
+//				break;
+//			case 4:
+//				Eng_left.Set_speed(50);
+//				Eng_right.Set_speed(50);
+//				f++;
+//				break;
+//			case 5:
+//				Eng_left.Set_speed(100);
+//				Eng_right.Set_speed(100);
+//				f++;
+//				break;
+//			case 6:
+//				Eng_left.Set_speed(0xFF);
+//				Eng_right.Set_speed(0xFF);
+//				f = 0;
+//				break;
+//			default:
+//				break;
+//			}
+//		}
 //		Eng_left.Set_speed(70);
 //		Eng_right.Set_speed(70);
 //		delay_ms(10);

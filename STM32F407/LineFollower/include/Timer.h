@@ -34,7 +34,7 @@ public:
     SysTick_Config(SystemCoreClock / FREQUENCY_HZ);
 
     TO_flag = false;
-    TO_run = false;
+    TO_run = true;
   }
 
   static void
