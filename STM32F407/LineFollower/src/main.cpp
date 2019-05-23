@@ -144,18 +144,18 @@ volatile bool Flag = false;
 void TIM2_Configuration(void) {
 	GPIO_InitTypeDef GPIO_InitStructure;
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
-	/* GPIOC clock enable */
+
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
-	/* TIM3 clock enable */
+
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
-	/* GPIOA Configuration: TIM2 CH1 (PA15) */
+
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF; // Input/Output controlled by peripheral
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP; // Button to ground expectation
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
-	/* Connect TIM2 pins to AF */
+
 	GPIO_PinAFConfig(GPIOA, GPIO_PinSource15, GPIO_AF_TIM2);
 	TIM_TimeBaseStructure.TIM_Period = 65535;
 	TIM_TimeBaseStructure.TIM_Prescaler = 0;
@@ -163,23 +163,23 @@ void TIM2_Configuration(void) {
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
 	TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
 	TIM_TIxExternalClockConfig(TIM2, TIM_TIxExternalCLK1Source_TI1,
-			TIM_ICPolarity_Falling, 15);
+	TIM_ICPolarity_Falling, 15);
 	TIM_Cmd(TIM2, ENABLE);
 }
 
 void TIM3_Configuration(void) {
 	GPIO_InitTypeDef GPIO_InitStructure;
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
-	/* GPIOC clock enable */
+
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
-	/* TIM3 clock enable */
+
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
-	/* GPIOA Configuration: TIM3 CH1 (PC6) */
+
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF; // Input/Output controlled by peripheral
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP; // Button to ground expectation
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
 	/* Connect TIM3 pins to AF */
 	GPIO_PinAFConfig(GPIOC, GPIO_PinSource6, GPIO_AF_TIM3);
@@ -189,7 +189,7 @@ void TIM3_Configuration(void) {
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
 	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
 	TIM_TIxExternalClockConfig(TIM3, TIM_TIxExternalCLK1Source_TI1,
-			TIM_ICPolarity_Falling, 15);
+	TIM_ICPolarity_Falling, 15);
 	TIM_Cmd(TIM3, ENABLE);
 }
 
@@ -353,163 +353,85 @@ int main(void) {
 //	Sensor PS(3850, 2530, 2450, 2200, ADC1, TM_ADC_Channel_12, &ADCConvertedValues[2]);
 //	Sensor PZ(3750, 2760, 2670, 2350, ADC1, TM_ADC_Channel_13, &ADCConvertedValues[3]);
 
-    Sensor SS(3550, 2260, 2300, 2040, ADC1, TM_ADC_Channel_9, &ADCConvertedValues[0]);
-    Sensor LZ(3720, 2250, 2300, 1880, ADC1, TM_ADC_Channel_11, &ADCConvertedValues[1]);
-    Sensor LS(3610, 2240, 2260, 1910, ADC1, TM_ADC_Channel_12, &ADCConvertedValues[2]);
-    Sensor PS(3820, 2380, 2440, 2130, ADC1, TM_ADC_Channel_14, &ADCConvertedValues[3]);
-    Sensor PZ(3550, 1210, 1290, 1060, ADC1, TM_ADC_Channel_15, &ADCConvertedValues[4]);
-
+	Sensor SS(3550, 2260, 2300, 2040, ADC1, TM_ADC_Channel_9, &ADCConvertedValues[0]);
+	Sensor LZ(3720, 2250, 2300, 1880, ADC1, TM_ADC_Channel_11, &ADCConvertedValues[1]);
+	Sensor LS(3610, 2240, 2260, 1910, ADC1, TM_ADC_Channel_12, &ADCConvertedValues[2]);
+	Sensor PS(3820, 2380, 2440, 2130, ADC1, TM_ADC_Channel_14, &ADCConvertedValues[3]);
+	Sensor PZ(3550, 1210, 1290, 1060, ADC1, TM_ADC_Channel_15, &ADCConvertedValues[4]);
 
 	uint8_t Last_inner = 0, Last_outer = 0;
 	while (1) {
 		if (Flag) {
 
-			if (LZ.Get_color() == BLACK) {
-				if(Last_outer == 0){//Last_outer!=RIGHT_S   || Last_outer == RIGHT_S
-//					if(timer.TO_flag){
-						Last_outer = LEFT_S;
-						Last_inner = LEFT_S;
-						Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
-						timer.sleep(200);
-//						timer.set_TimeOut(100);
-//					}
-				}else if (Last_outer == LEFT_S)
-				{
-//					Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
-					Last_outer = 3;
-//					Last_outer = 5;
-//					Eng_left.Set_speed(20);
-//					Eng_right.Set_speed(20);
-//					Last_outer = NONE;
-				}
-				else if (Last_outer == RIGHT_S)
-				{
-//					if(timer.TO_flag)
-//					{
-						Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
-//					}
-				}
-//				else
-//				{
-//					Eng_left.Set_speed(5);
-//					Eng_right.Set_speed(5);
-//				}
+			if (LZ.Get_color() == BLACK && LS.Get_color() != BLACK && PS.Get_color() != BLACK && SS.Get_color() != BLACK) {
+				if (Last_outer == 0) {
 
+					Last_inner = LEFT;
+					Engine::Turn(LEFT, GENTLE_TWO, &Eng_left, &Eng_right);
+//					LCD5110_set_XY(0, 3);
+//					LCD5110_write_Dec(1);
 
-//				if(last != 4){
-//					last = 3;
-//					Engine::Turn(LEFT, NORMAL_ONE, &Eng_left, &Eng_right);
-//					timer.sleep(100);
-//				}
-////				Eng_left.Stop();
-////				Eng_right.Stop();
-////				Flag = false;
-			}
-			else if (PZ.Get_color() == BLACK) {
-				if(Last_outer == 0){
-//					if(timer.TO_flag){
-						Last_outer = RIGHT_S;
-						Last_inner = RIGHT_S;
-						Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
-						timer.sleep(200);
-//						timer.set_TimeOut(100);
-//					}
-				}else if (Last_outer == RIGHT_S)
-				{
-//					Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
-					Last_outer = 4;
-//					Last_outer = 5;
-//					Eng_left.Set_speed(20);
-//					Eng_right.Set_speed(20);
-//					Last_outer = NONE;
 				}
-				else if (Last_outer == LEFT_S)
-				{
-//					if(timer.TO_flag)
-//					{
-						Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
-//					}
-				}
-//				else
-//				{
-//					Eng_left.Set_speed(5);
-//					Eng_right.Set_speed(5);
-//				}
 
-//				if(last != 3){
-//					last = 4;
-//					Engine::Turn(RIGHT, NORMAL_ONE, &Eng_left, &Eng_right);
-//					timer.sleep(100);
-//				}
-////				Eng_left.Stop();
-////				Eng_right.Stop();
-////				Flag = false;
-			}
-			else if (SS.Get_color() == BLACK) {
-				if(Last_inner < 3 && (Last_outer < 1 || Last_outer > 2 )){
-//					Eng_left.Set_speed(50);
-//					Eng_right.Set_speed(50);
-//					timer.sleep(20);
-//				Eng_left.Set_speed(70);
-//				Eng_right.Set_speed(70);
-//				timer.sleep(50);
-					Eng_left.Set_speed(10);
-					Eng_right.Set_speed(10);
-//					if(Last_outer>=3)
-//						Last_outer = NONE;
-				}
-//				Eng_left.Set_speed(100);
-//				Eng_right.Set_speed(100);
-//				timer.sleep(30);
-
-			} else if (LS.Get_color() == BLACK && PS.Get_color() != BLACK) {
-				if(Last_inner < 3 && (Last_outer < 1 || Last_outer > 2 )){
+			} else if (LZ.Get_color() == BLACK && (LS.Get_color() == BLACK || PS.Get_color() == BLACK || SS.Get_color() == BLACK)) {
+				if (Last_outer == 0) { //Last_outer!=RIGHT_S   || Last_outer == RIGHT_S
+					Last_outer = LEFT_S;
 					Last_inner = LEFT_S;
 					Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
-					if(Last_outer>2)
+					timer.sleep(500);
+//					LCD5110_set_XY(0, 3);
+//					LCD5110_write_Dec(2);
+
+				}
+
+			} else if (PZ.Get_color() == BLACK && LS.Get_color() != BLACK && PS.Get_color() != BLACK && SS.Get_color() != BLACK) {
+				if (Last_outer == 0) {
+
+					Last_inner = RIGHT_S;
+					Engine::Turn(RIGHT, GENTLE_TWO, &Eng_left, &Eng_right);
+//					LCD5110_set_XY(0, 3);
+//					LCD5110_write_Dec(3);
+				}
+
+			} else if (PZ.Get_color() == BLACK && (LS.Get_color() == BLACK || PS.Get_color() == BLACK || SS.Get_color() == BLACK)) {
+				if (Last_outer == 0) { //Last_outer!=RIGHT_S   || Last_outer == RIGHT_S
+					Last_outer = RIGHT;
+					Last_inner = RIGHT;
+					Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
+					timer.sleep(500);
+//					LCD5110_set_XY(0, 3);
+//					LCD5110_write_Dec(4);
+
+				}
+
+			} else if (SS.Get_color() == BLACK && LS.Get_color() != BLACK && PS.Get_color() != BLACK) {
+				if (Last_inner < 3 && (Last_outer < 1 || Last_outer > 2)) {
+
+					Eng_left.Set_speed(3);
+					Eng_right.Set_speed(10);
+
+				}
+
+			} else if (LS.Get_color() == BLACK && PS.Get_color() != BLACK && SS.Get_color() != BLACK) {
+				if (Last_inner < 3) { // && (Last_outer < 1 || Last_outer > 2 )
+					Last_inner = LEFT_S;
+					Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
+					if (Last_outer > 0)
 						Last_outer = NONE;
 				}
-			} else if (LS.Get_color() != BLACK && PS.Get_color() == BLACK) {
-				if(Last_inner < 3 && (Last_outer < 1 || Last_outer > 2 )){
+			} else if (LS.Get_color() != BLACK && PS.Get_color() == BLACK && SS.Get_color() != BLACK) {
+				if (Last_inner < 3) { // && (Last_outer < 1 || Last_outer > 2 )
 					Last_inner = RIGHT_S;
 					Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
-					if(Last_outer>2)
+					if (Last_outer > 0)
 						Last_outer = NONE;
 				}
 			} else if (LS.Get_color() != BLACK && PS.Get_color() != BLACK && SS.Get_color() != BLACK) {
 				if (Last_outer == 0) {
 					if (Last_inner == LEFT_S)
-						Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
+						Engine::Turn(LEFT, GENTLE_TWO, &Eng_left, &Eng_right);
 					if (Last_inner == RIGHT_S)
-						Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
-//				} else if (Last_outer < 3) {
-/////					if(!timer.TO_flag){
-//						if (Last_outer == LEFT_S) {
-//							Engine::Turn(LEFT, NORMAL_ONE, &Eng_left, &Eng_right);
-//							Last_outer = 3;
-//						}
-//						if (Last_outer == RIGHT_S) {
-//							Engine::Turn(RIGHT, NORMAL_ONE, &Eng_left, &Eng_right);
-//							Last_outer = 4;
-//						}
-//						Last_inner = 0;
-////					}else{
-////						timer.TO_flag = false;
-////						Last_outer = NONE;
-////					}
-//				} else {
-//					Eng_left.Set_speed(100);
-//					Eng_right.Set_speed(100);
-//					timer.sleep(30);
-//					Eng_left.Set_speed(5);
-//					Eng_right.Set_speed(5);
-//					Last_outer = 0;
-////					if(Last_outer == 3){
-////
-////					}else
-////					{
-//
-////					}
+						Engine::Turn(RIGHT, GENTLE_TWO, &Eng_left, &Eng_right);
 				}
 			}
 		}
@@ -522,9 +444,9 @@ int main(void) {
 ////		LCD5110_set_XY(5,3);
 ////		LCD5110_write_Dec(TIM_GetCounter(TIM3));
 //		LCD5110_set_XY(0, 3);
-//		LCD5110_write_Dec(RPM_L);
+//		LCD5110_write_Dec(Last_inner);
 //		LCD5110_set_XY(5, 3);
-//		LCD5110_write_Dec(RPM_P);
+//		LCD5110_write_Dec(Last_outer);
 
 //		trace_printf("LZ: %d   LS: %d   SS: %d  PS: %d   PZ: %d   \n", ADCConvertedValues[1],
 //						ADCConvertedValues[2], ADCConvertedValues[0], ADCConvertedValues[3], ADCConvertedValues[4]);
@@ -589,8 +511,8 @@ void TIM5_IRQHandler(void) {
 	if (TIM_GetITStatus(TIM5, TIM_IT_Update) != RESET) {
 		TIM_ClearITPendingBit(TIM5, TIM_IT_Update);
 
-		RPM_L = TIM_GetCounter(TIM2)*30;
-		RPM_P = TIM_GetCounter(TIM3)*30;
+		RPM_L = TIM_GetCounter(TIM2) * 30;
+		RPM_P = TIM_GetCounter(TIM3) * 30;
 
 		TIM_SetCounter(TIM2, 0);
 		TIM_SetCounter(TIM3, 0);
@@ -605,12 +527,12 @@ void EXTI0_IRQHandler(void) {
 		delay_ms(1000);
 //		if((((GPIOA)->IDR & (GPIO_Pin_0)) == 0 ? 0 : 1))
 //		{
-			LCD5110_set_XY(0, 5);
-			LCD5110_write_string("START");
-			delay_ms(5000);
-			Eng_left.Set_speed(5);
-			Eng_right.Set_speed(5);
-			Flag = true;
+		LCD5110_set_XY(0, 5);
+		LCD5110_write_string("START");
+		delay_ms(5000);
+		Eng_left.Set_speed(5);
+		Eng_right.Set_speed(40);
+		Flag = true;
 
 //		}else
 //		{
@@ -660,7 +582,6 @@ void EXTI0_IRQHandler(void) {
 //		Eng_left.Set_speed(5);
 //		Eng_right.Set_speed(5);
 //		Flag = true;
-
 
 		/* Clear the EXTI line 0 pending bit */
 		EXTI_ClearITPendingBit(EXTI_Line0);

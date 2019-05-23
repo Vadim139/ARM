@@ -25,6 +25,7 @@ typedef enum {
 typedef enum {
 	GENTLE,
 	GENTLE_ONE,
+	GENTLE_TWO,
 	NORMAL,
 	NORMAL_ONE,
 	FAST

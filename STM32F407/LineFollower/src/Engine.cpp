@@ -213,6 +213,13 @@ void Engine::Turn(Engine_dir_t dir,Engine_turn_speed_t speed, Engine* left, Engi
 //					timer.sleep(20);
 					right->Set_speed(5);
 					break;
+				case GENTLE_TWO:
+//					left->Set_speed(-50);
+					left->Set_speed(0xFF);
+//					right->Set_speed(30);
+//					timer.sleep(20);
+					right->Set_speed(5);
+					break;
 				case NORMAL_ONE:
 //					left->Set_speed(-50);
 					left->Set_speed(0xFF);
@@ -253,6 +260,13 @@ void Engine::Turn(Engine_dir_t dir,Engine_turn_speed_t speed, Engine* left, Engi
 					left->Set_speed(10);
 					break;
 				case GENTLE_ONE:
+//					right->Set_speed(-50);
+					right->Set_speed(0xFF);
+//					left->Set_speed(30);
+//					timer.sleep(20);
+					left->Set_speed(5);
+					break;
+				case GENTLE_TWO:
 //					right->Set_speed(-50);
 					right->Set_speed(0xFF);
 //					left->Set_speed(30);
