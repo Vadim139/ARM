@@ -15,7 +15,11 @@
 #include "Sensor.h"
 #include "Engine.h"
 #include "5110.h"
+
+#include "cmsis_os.h"
 //#include "stm32f4xx.h"
+
+osThreadId defaultTaskHandle;
 
 uint32_t k[10];
 uint8_t i = 0;
@@ -266,6 +270,16 @@ void EXTI_Conf() {
 volatile u16 RPM_L = 0;
 volatile u16 RPM_P = 0;
 
+void StartDefaultTask(void const * argument)
+{
+	while(1){
+		trace_printf("Argument - %s",argument);
+		osDelay(500);
+	}
+}
+char str[] = "Task 1";
+uint32_t LedBuffer[ 128 ];
+osStaticThreadDef_t LedControlBlock;
 int main(void) {
 
 	/* Initialization */
@@ -273,7 +287,27 @@ int main(void) {
 	RCC_HSEConfig(RCC_HSE_ON);
 	while (!RCC_WaitForHSEStartUp()) {
 	}
+//		osThreadDef(StartDefaultTask, osPriorityNormal, DEFAULT_STACK_SIZE);
+	  osThreadStaticDef(defaultTask,StartDefaultTask, osPriorityNormal, 0, 128, LedBuffer, &LedControlBlock);
+	  defaultTaskHandle = osThreadCreate(osThread(defaultTask), str);
 
+	  /* USER CODE BEGIN RTOS_THREADS */
+	  /* add threads, ... */
+	  /* USER CODE END RTOS_THREADS */
+
+	  /* Start scheduler */
+	  osKernelStart();
+
+	  /* We should never get here as control is now taken by the scheduler */
+
+	  /* Infinite loop */
+	  /* USER CODE BEGIN WHILE */
+	  while (1)
+	  {
+	    /* USER CODE END WHILE */
+
+	    /* USER CODE BEGIN 3 */
+	  }
 //
 //  Init_SysTick();
 //  SysTick_Config(168);
