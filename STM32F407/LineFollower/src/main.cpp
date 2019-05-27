@@ -57,7 +57,7 @@ void ADC_DMA_config() {
 	ADC_InitTypeDef ADC_InitStructure;
 	/* ADC Common Init */
 	ADC_CommonInitStructure.ADC_Mode = ADC_Mode_Independent;
-	ADC_CommonInitStructure.ADC_Prescaler = ADC_Prescaler_Div2;
+	ADC_CommonInitStructure.ADC_Prescaler = ADC_Prescaler_Div8;
 	ADC_CommonInitStructure.ADC_DMAAccessMode = ADC_DMAAccessMode_Disabled;
 	ADC_CommonInitStructure.ADC_TwoSamplingDelay = ADC_TwoSamplingDelay_5Cycles;
 	ADC_CommonInit(&ADC_CommonInitStructure);
@@ -71,11 +71,11 @@ void ADC_DMA_config() {
 	ADC_InitStructure.ADC_NbrOfConversion = 5;
 	ADC_Init(ADC1, &ADC_InitStructure);
 	/* ADC1 regular channel configuration */
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_9, 1, ADC_SampleTime_15Cycles);
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_11, 2, ADC_SampleTime_15Cycles);
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_12, 3, ADC_SampleTime_15Cycles);
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_14, 4, ADC_SampleTime_15Cycles);
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_15, 5, ADC_SampleTime_15Cycles); // PC1
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_9, 1, ADC_SampleTime_480Cycles);
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_11, 2, ADC_SampleTime_480Cycles);
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_12, 3, ADC_SampleTime_480Cycles);
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_14, 4, ADC_SampleTime_480Cycles);
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_15, 5, ADC_SampleTime_480Cycles); // PC1
 	/* Enable DMA request after last transfer (Single-ADC mode) */
 	ADC_DMARequestAfterLastTransferCmd(ADC1, ENABLE);
 	/* Enable ADC1 DMA */
@@ -353,87 +353,199 @@ int main(void) {
 //	Sensor PS(3850, 2530, 2450, 2200, ADC1, TM_ADC_Channel_12, &ADCConvertedValues[2]);
 //	Sensor PZ(3750, 2760, 2670, 2350, ADC1, TM_ADC_Channel_13, &ADCConvertedValues[3]);
 
-	Sensor SS(3550, 2260, 2300, 2040, ADC1, TM_ADC_Channel_9, &ADCConvertedValues[0]);
-	Sensor LZ(3720, 2250, 2300, 1880, ADC1, TM_ADC_Channel_11, &ADCConvertedValues[1]);
-	Sensor LS(3610, 2240, 2260, 1910, ADC1, TM_ADC_Channel_12, &ADCConvertedValues[2]);
-	Sensor PS(3820, 2380, 2440, 2130, ADC1, TM_ADC_Channel_14, &ADCConvertedValues[3]);
-	Sensor PZ(3550, 1210, 1290, 1060, ADC1, TM_ADC_Channel_15, &ADCConvertedValues[4]);
+	Sensor SS(3550, 2260, 2300, 2040, ADC1, 0, ADCConvertedValues);
+	Sensor LZ(3720, 2260, 2300, 1880, ADC1, 1, ADCConvertedValues);
+	Sensor LS(3610, 2100, 2260, 1910, ADC1, 2, ADCConvertedValues);
+	Sensor PS(3820, 2240, 2440, 2130, ADC1, 3, ADCConvertedValues);
+	Sensor PZ(3550, 1450, 1290, 1060, ADC1, 4, ADCConvertedValues);
 
 	uint8_t Last_inner = 0, Last_outer = 0;
+	uint8_t color = BLACK;
+	u8 lz, ls,ss,ps,pz;
+//	lz = LZ.Get_color2();
+	ls = LS.Get_color2();
+	ss = SS.Get_color2();
+	ps = PS.Get_color2();
+//	pz = PZ.Get_color2();
+
 	while (1) {
-		if (Flag) {
+		if (Flag)  {
 
-			if (LZ.Get_color() == BLACK && LS.Get_color() != BLACK && PS.Get_color() != BLACK && SS.Get_color() != BLACK) {
-				if (Last_outer == 0) {
+			switch (color) {
+				case BLACK:
+//					if(lz == BLUE || ls == BLUE || ps == BLUE || ss == BLUE || pz == BLUE)
+//					{
+//						if(timer.TO_flag){
+//							color = BLUE;
+//							timer.set_TimeOut(1000);
+//							break;
+//						}
+//					}
+					if (LZ.Get_color() == BLACK && LS.Get_color() != BLACK && PS.Get_color() != BLACK && SS.Get_color() != BLACK) {
+						if (Last_outer == 0) {
 
-					Last_inner = LEFT;
-					Engine::Turn(LEFT, GENTLE_TWO, &Eng_left, &Eng_right);
-//					LCD5110_set_XY(0, 3);
-//					LCD5110_write_Dec(1);
+							Last_inner = LEFT;
+							Engine::Turn(LEFT, GENTLE_TWO, &Eng_left, &Eng_right);
+		//					LCD5110_set_XY(0, 3);
+		//					LCD5110_write_Dec(1);
 
-				}
+						}
 
-			} else if (LZ.Get_color() == BLACK && (LS.Get_color() == BLACK || PS.Get_color() == BLACK || SS.Get_color() == BLACK)) {
-				if (Last_outer == 0) { //Last_outer!=RIGHT_S   || Last_outer == RIGHT_S
-					Last_outer = LEFT_S;
-					Last_inner = LEFT_S;
-					Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
-					timer.sleep(500);
-//					LCD5110_set_XY(0, 3);
-//					LCD5110_write_Dec(2);
+					} else if (LZ.Get_color() == BLACK && (LS.Get_color() == BLACK || PS.Get_color() == BLACK || SS.Get_color() == BLACK)) {
+						if (Last_outer == 0) { //Last_outer!=RIGHT_S   || Last_outer == RIGHT_S
+							Last_outer = LEFT_S;
+							Last_inner = LEFT_S;
+							Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
+							timer.sleep(500);
+		//					LCD5110_set_XY(0, 3);
+		//					LCD5110_write_Dec(2);
 
-				}
+						}
 
-			} else if (PZ.Get_color() == BLACK && LS.Get_color() != BLACK && PS.Get_color() != BLACK && SS.Get_color() != BLACK) {
-				if (Last_outer == 0) {
+					} else if (PZ.Get_color() == BLACK && LS.Get_color() != BLACK && PS.Get_color() != BLACK && SS.Get_color() != BLACK) {
+						if (Last_outer == 0) {
 
-					Last_inner = RIGHT_S;
-					Engine::Turn(RIGHT, GENTLE_TWO, &Eng_left, &Eng_right);
-//					LCD5110_set_XY(0, 3);
-//					LCD5110_write_Dec(3);
-				}
+							Last_inner = RIGHT_S;
+							Engine::Turn(RIGHT, GENTLE_TWO, &Eng_left, &Eng_right);
+		//					LCD5110_set_XY(0, 3);
+		//					LCD5110_write_Dec(3);
+						}
 
-			} else if (PZ.Get_color() == BLACK && (LS.Get_color() == BLACK || PS.Get_color() == BLACK || SS.Get_color() == BLACK)) {
-				if (Last_outer == 0) { //Last_outer!=RIGHT_S   || Last_outer == RIGHT_S
-					Last_outer = RIGHT;
-					Last_inner = RIGHT;
-					Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
-					timer.sleep(500);
-//					LCD5110_set_XY(0, 3);
-//					LCD5110_write_Dec(4);
+					} else if (PZ.Get_color() == BLACK && (LS.Get_color() == BLACK || PS.Get_color() == BLACK || SS.Get_color() == BLACK)) {
+						if (Last_outer == 0) { //Last_outer!=RIGHT_S   || Last_outer == RIGHT_S
+							Last_outer = RIGHT;
+							Last_inner = RIGHT;
+							Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
+							timer.sleep(500);
+		//					LCD5110_set_XY(0, 3);
+		//					LCD5110_write_Dec(4);
 
-				}
+						}
 
-			} else if (SS.Get_color() == BLACK && LS.Get_color() != BLACK && PS.Get_color() != BLACK) {
-				if (Last_inner < 3 && (Last_outer < 1 || Last_outer > 2)) {
+					} else if (SS.Get_color() == BLACK && LS.Get_color() != BLACK && PS.Get_color() != BLACK) {
+						if (Last_inner < 3 && (Last_outer < 1 || Last_outer > 2)) {
 
-					Eng_left.Set_speed(3);
-					Eng_right.Set_speed(10);
+							Eng_left.Set_speed(3);
+							Eng_right.Set_speed(10);
 
-				}
+						}
 
-			} else if (LS.Get_color() == BLACK && PS.Get_color() != BLACK && SS.Get_color() != BLACK) {
-				if (Last_inner < 3) { // && (Last_outer < 1 || Last_outer > 2 )
-					Last_inner = LEFT_S;
-					Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
-					if (Last_outer > 0)
-						Last_outer = NONE;
-				}
-			} else if (LS.Get_color() != BLACK && PS.Get_color() == BLACK && SS.Get_color() != BLACK) {
-				if (Last_inner < 3) { // && (Last_outer < 1 || Last_outer > 2 )
-					Last_inner = RIGHT_S;
-					Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
-					if (Last_outer > 0)
-						Last_outer = NONE;
-				}
-			} else if (LS.Get_color() != BLACK && PS.Get_color() != BLACK && SS.Get_color() != BLACK) {
-				if (Last_outer == 0) {
-					if (Last_inner == LEFT_S)
-						Engine::Turn(LEFT, GENTLE_TWO, &Eng_left, &Eng_right);
-					if (Last_inner == RIGHT_S)
-						Engine::Turn(RIGHT, GENTLE_TWO, &Eng_left, &Eng_right);
-				}
+					} else if (LS.Get_color() == BLACK && PS.Get_color() != BLACK && SS.Get_color() != BLACK) {
+						if (Last_inner < 3) { // && (Last_outer < 1 || Last_outer > 2 )
+							Last_inner = LEFT_S;
+							Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
+							if (Last_outer > 0)
+								Last_outer = NONE;
+						}
+					} else if (LS.Get_color() != BLACK && PS.Get_color() == BLACK && SS.Get_color() != BLACK) {
+						if (Last_inner < 3) { // && (Last_outer < 1 || Last_outer > 2 )
+							Last_inner = RIGHT_S;
+							Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
+							if (Last_outer > 0)
+								Last_outer = NONE;
+						}
+					} else if (LS.Get_color() != BLACK && PS.Get_color() != BLACK && SS.Get_color() != BLACK) {
+						if (Last_outer == 0) {
+							if (Last_inner == LEFT_S)
+								Engine::Turn(LEFT, GENTLE_TWO, &Eng_left, &Eng_right);
+							if (Last_inner == RIGHT_S)
+								Engine::Turn(RIGHT, GENTLE_TWO, &Eng_left, &Eng_right);
+						}
+					}
+					break;
+				case BLUE:
+//					lz = LZ.Get_color2();
+					ls = LS.Get_color2();
+					ss = SS.Get_color2();
+					ps = PS.Get_color2();
+//					pz = PZ.Get_color2();
+//					if(LZ.Get_color() == BLACK || LS.Get_color() == BLACK || PS.Get_color() == BLACK || SS.Get_color() == BLACK || PZ.Get_color() == BLACK)
+//					{
+//						if(timer.TO_flag){
+//							color = BLACK;
+//							timer.set_TimeOut(1000);
+//							break;
+//						}
+//					}
+
+//					if (lz == BLUE && ls != BLUE && ps != BLUE && ss != BLUE) {
+//						if (Last_outer == 0) {
+//
+//							Last_inner = LEFT;
+//							Engine::Turn(LEFT, GENTLE_TWO, &Eng_left, &Eng_right);
+//		//					LCD5110_set_XY(0, 3);
+//		//					LCD5110_write_Dec(1);
+//
+//						}
+//
+//					} else if (lz == BLUE && (ls == BLUE || ps == BLUE || ss == BLUE)) {
+//						if (Last_outer == 0) { //Last_outer!=RIGHT_S   || Last_outer == RIGHT_S
+//							Last_outer = LEFT_S;
+//							Last_inner = LEFT_S;
+//							Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
+//							timer.sleep(500);
+//		//					LCD5110_set_XY(0, 3);
+//		//					LCD5110_write_Dec(2);
+//
+//						}
+//
+//					} else if (pz == BLUE && ls != BLUE && ps != BLUE && ss != BLUE) {
+//						if (Last_outer == 0) {
+//
+//							Last_inner = RIGHT_S;
+//							Engine::Turn(RIGHT, GENTLE_TWO, &Eng_left, &Eng_right);
+//		//					LCD5110_set_XY(0, 3);
+//		//					LCD5110_write_Dec(3);
+//						}
+//
+//					} else if (pz == BLUE && (ls == BLUE || ps == BLUE || ss == BLUE)) {
+//						if (Last_outer == 0) { //Last_outer!=RIGHT_S   || Last_outer == RIGHT_S
+//							Last_outer = RIGHT;
+//							Last_inner = RIGHT;
+//							Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
+//							timer.sleep(500);
+//		//					LCD5110_set_XY(0, 3);
+//		//					LCD5110_write_Dec(4);
+//
+//						}
+
+//					} else
+					if (ss == BLUE && ls != BLUE && ps != BLUE) {
+						if (Last_inner < 3 && (Last_outer < 1 || Last_outer > 2)) {
+
+							Eng_left.Set_speed(3);
+							Eng_right.Set_speed(10);
+
+						}
+
+					} else if (ls == BLUE && ps != BLUE && ss != BLUE) {
+						if (Last_inner < 3) { // && (Last_outer < 1 || Last_outer > 2 )
+							Last_inner = LEFT_S;
+							Engine::Turn(LEFT, GENTLE_ONE, &Eng_left, &Eng_right);
+							if (Last_outer > 0)
+								Last_outer = NONE;
+						}
+					} else if (ls != BLUE && ps == BLUE && ss != BLUE) {
+						if (Last_inner < 3) { // && (Last_outer < 1 || Last_outer > 2 )
+							Last_inner = RIGHT_S;
+							Engine::Turn(RIGHT, GENTLE_ONE, &Eng_left, &Eng_right);
+							if (Last_outer > 0)
+								Last_outer = NONE;
+						}
+					} else if (ls != BLUE && ps != BLUE && ss != BLUE) {
+						if (Last_outer == 0) {
+							if (Last_inner == LEFT_S)
+								Engine::Turn(LEFT, GENTLE_TWO, &Eng_left, &Eng_right);
+							if (Last_inner == RIGHT_S)
+								Engine::Turn(RIGHT, GENTLE_TWO, &Eng_left, &Eng_right);
+						}
+					}
+					break;
+				default:
+					break;
 			}
+
+
 		}
 //		LCD5110_set_XY(0, 0);
 //		sprintf(temp, "     SS:%d       LS:%d  PS:%d  LZ:%d      PZ:%d", SS.Get_color(),
@@ -448,13 +560,21 @@ int main(void) {
 //		LCD5110_set_XY(5, 3);
 //		LCD5110_write_Dec(Last_outer);
 
+//		trace_printf("LZ: %d   LS: %d   SS: %d  PS: %d   PZ: %d   \n", (uint16_t)(ADCConvertedValues[1]*1.01),
+//				(uint16_t)(ADCConvertedValues[2]*1.052), (uint16_t)(ADCConvertedValues[0]), (uint16_t)(ADCConvertedValues[3]*0.948), (uint16_t)(ADCConvertedValues[4]*1.5));
+
 //		trace_printf("LZ: %d   LS: %d   SS: %d  PS: %d   PZ: %d   \n", ADCConvertedValues[1],
 //						ADCConvertedValues[2], ADCConvertedValues[0], ADCConvertedValues[3], ADCConvertedValues[4]);
 
 //		trace_printf("Counter: %d\n",TIM_GetCounter(TIM3));
-//		timer.sleep(100);
-//		trace_printf("LZ: %d   LS: %d   PS: %d   PZ: %d   \n", LZ.Get_color(),
-//				LS.Get_color(), PS.Get_color(), PZ.Get_color());
+//		timer.sleep(1000);
+//		ls = LS.Get_color2();
+//		ss = SS.Get_color2();
+//		ps = PS.Get_color2();
+//		trace_printf("LZ: %d   LS: %d   SS: %d  PS: %d   PZ: %d   \n", lz,
+//				ls, ss, ps, pz);
+//		trace_printf("LZ: %d   LS: %d   SS: %d  PS: %d   PZ: %d   \n", LZ.Get_color(),
+//				LS.Get_color(), SS.Get_color(), PS.Get_color(), PZ.Get_color());
 //		trace_printf("LZ: %d   LS: %d   PS: %d   PZ: %d   \n", ADCConvertedValues[0],
 //				ADCConvertedValues[1], ADCConvertedValues[2], ADCConvertedValues[3]);
 //    	ADC_1 = TM_ADC_Read(ADC1,TM_ADC_Channel_10);

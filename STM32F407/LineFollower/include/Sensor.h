@@ -38,6 +38,7 @@ public:
 	Sensor(uint16_t black, uint16_t blue, uint16_t red, uint16_t white, ADC_TypeDef* ADCx, uint8_t channel, volatile uint16_t* value);
 	virtual ~Sensor();
 	Sensors_colors_t Get_color(void);
+	Sensors_colors_t Get_color2(void);
 //	uint16_t around[4] = {150,60,30,30};
 //	uint16_t around[4] = {100,30,15,15};
 //	uint16_t around[4] = {300,150,150,300};
